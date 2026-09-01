@@ -31,11 +31,21 @@ ai-agent-kit/
 │       └── 05-red-line-check.md
 ├── references/
 │   ├── ai-methodology.md       # 完整方法论（8 节，可当 PPT 大纲）
-│   └── eval-framework.md       # 评测体系（如何评估指南的进化程度）
+│   └── eval-framework.md       # 评测体系定稿（五层过滤 + 五维 rubric）
+├── evals/                      # 回归评测体系（评估 kit 自身进化程度）
+│   ├── README.md               # 运行手册（怎么跑）
+│   ├── run-baseline.md         # 基线运行手册（干净上下文 + judge 隔离）
+│   ├── cases/                  # L1 结构清单 + L2 路由用例 + L3 陷阱用例
+│   ├── golden-tasks/           # L4 端到端任务卡 T1~T6 + 五维 RUBRIC
+│   └── reports/                # 评测报告落盘（含模板）
 ├── scripts/
-│   └── sync-to-target.sh       # 同步到其他仓库的脚本（目标可配置）
+│   ├── sync-to-target.sh       # 同步到其他仓库的脚本（目标可配置）
+│   ├── run-eval.sh             # 测评编排（AGENT_CMD 参数化，需被测 agent 无头调用）
+│   ├── check-artifacts.sh      # 产物落盘核对（D1 机器可判定）
+│   └── gen-report.sh           # 评测报告骨架生成
 └── .github/workflows/
-    └── sync-to-target.yml      # 推送 master 时自动开 PR 到目标仓库
+    ├── sync-to-target.yml      # 推送 master 时自动开 PR 到目标仓库
+    └── eval-gate.yml           # PR 门禁：结构检查 + 改 kit 必须附评测报告
 ```
 
 ## 核心方法论（一句话版）
@@ -64,6 +74,18 @@ ai-agent-kit/
 ### 3. 分享给团队
 `references/ai-methodology.md` 已是成稿的方法论分享材料，可直接当内部分享 PPT 大纲或 WIKI 首页。
 
+## 评测与基线（怎么证明 kit 真的变好了）
+
+评测体系证明每次变更后，加载 kit 的 Agent 行为真的变好了（而非「看起来变好」）。想跑测试，直接从这里进：
+
+| 你要做什么 | 去哪 |
+|-----------|------|
+| **跑基线 / 执行测试**（含脚本化三步 + AGENT_CMD 规范） | [`evals/run-baseline.md`](evals/run-baseline.md) |
+| 日常评测运行手册（六步 + 成熟度标尺） | [`evals/README.md`](evals/README.md) |
+| 评测体系定稿（五层过滤 + 五维 rubric） | [`references/eval-framework.md`](references/eval-framework.md) |
+
+被测 agent 就绪后的最快路径：打开 `evals/run-baseline.md`「脚本化执行」→ 填 `AGENT_CMD` → `bash scripts/run-eval.sh`。
+
 ## 同步到其他仓库（可选）
 
 可将本仓库推送到 `master` 时，自动把 `skills/`、`rules/`、`references/`、`AGENT.md` 拷贝到目标仓库的 `.codebuddy/agent-kit/` 并开 PR（幂等，无变更则跳过）。
@@ -78,8 +100,14 @@ ai-agent-kit/
 
 ## 成熟度自评（任何团队可对照）
 
-- ✅ 已具备：指南层、技能/SOP 层、版本化产物、子任务拆分、上下文工程、人审节点、调试/验证/重构/探索四类编码技能、红线机器化示例。
-- ❌ 仍可进化：① 意图未版本化（方案常留对话里）② 回归评测框架已设计（见 `references/eval-framework.md`），用例集待实例化 ③ 红线示例需按项目实例化。
+评测体系见 `references/eval-framework.md`（定稿）：五层过滤 L1 结构 → L2 路由 → L3 行为 → L4 端到端 → L5 实战 + 统一五维 Rubric 评分内核。
+
+按融合后的 L1~L5 标尺自评：
+
+- ✅ L1 结构完整：三层结构、11 个 skills、5 条红线、CI 结构检查（`eval-gate.yml`）就绪
+- ✅ L2/L3/L4 用例集已落盘：路由用例 20 条（`evals/cases/routing.md`）、陷阱用例 6 条（`evals/cases/behavior.md`）、端到端任务卡 6 张 + 五维 RUBRIC（`evals/golden-tasks/`）
+- ✅ 运行手册就绪：日常评测（`evals/README.md`）+ 干净基线（`evals/run-baseline.md`，judge 隔离防自评污染）
+- ❌ 待办：① 跑首份基线评测报告（没有基线就没有进化曲线；须按 `evals/run-baseline.md` 在干净上下文执行）② L5 实战验证需积累真实人审打回率数据 ③ 红线示例需按项目实例化
 
 ## 与你的主项目的关系
 

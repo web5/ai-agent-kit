@@ -1,0 +1,71 @@
+name: eval-gate
+
+on:
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 结构完备性检查（L1 · S1~S5）
+        run: |
+          fail=0
+          # S1 必需文件齐全
+          for f in AGENT.md README.md \
+                   references/ai-methodology.md references/eval-framework.md \
+                   evals/README.md evals/cases/structure.md evals/cases/routing.md evals/cases/behavior.md \
+                   evals/golden-tasks/RUBRIC.md evals/golden-tasks/README.md evals/reports/TEMPLATE.md \
+                   rules/general/01-loop-workflow.md \
+                   rules/general/02-human-in-loop.md \
+                   rules/general/03-versioned-artifacts.md \
+                   rules/general/04-subagent-isolation.md \
+                   rules/general/05-red-line-check.md; do
+            [ -f "$f" ] || { echo "::error file=$f::缺少必需文件 $f"; fail=1; }
+          done
+          # S2 无孤儿 skill
+          for d in skills/*/; do
+            s=$(basename "$d")
+            case "$s" in
+              rd-digital-agent|rd-brainstorm|rd-plan|rd-execute|rd-review|systematic-debugging|incremental-refactoring|code-explore|tech-review|verification-before-completion|user-memory) ;;
+              *) echo "::error::孤儿 skill：$s 未被任何决策树/用例引用"; fail=1 ;;
+            esac
+          done
+          # S3 frontmatter 完整（name 与目录名一致）
+          for f in skills/*/SKILL.md; do
+            d=$(basename "$(dirname "$f")")
+            if ! grep -q "^name:[[:space:]]*$d[[:space:]]*$" "$f"; then
+              echo "::error file=$f::frontmatter 缺少 name=$d"; fail=1
+            fi
+          done
+          # S4 占位残留禁止入库（skills 中的 <your-team> 为有意占位，不检查 skills/）
+          if grep -rn '<your-team>\|<your-project>' rules/ references/ AGENT.md 2>/dev/null; then
+            echo "::error::发现占位符残留（rules/references/AGENT.md 不允许占位符）"; fail=1
+          fi
+          # S5 路由指向的 skill 存在（决策树引用的 9 个子技能）
+          for s in rd-brainstorm rd-plan rd-execute rd-review systematic-debugging incremental-refactoring code-explore tech-review verification-before-completion; do
+            [ -f "skills/$s/SKILL.md" ] || { echo "::error::决策树引用 skills/$s 但文件不存在"; fail=1; }
+          done
+          exit $fail
+
+      - name: 评测报告门禁
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git fetch origin "$BASE_SHA" --depth=1 2>/dev/null || true
+          kit_changes=$(git diff --name-only "$BASE_SHA" HEAD -- AGENT.md skills/ rules/ references/ | wc -l | tr -d ' ')
+          report_changes=$(git diff --name-only "$BASE_SHA" HEAD -- evals/reports/ | grep -v 'TEMPLATE.md' | wc -l | tr -d ' ')
+          echo "kit 内容变更文件数: $kit_changes；新增评测报告数: $report_changes"
+          if [ "$kit_changes" -gt 0 ] && [ "$report_changes" -eq 0 ]; then
+            echo "::error::本次 PR 修改了 AGENT.md/skills/rules/references，但未附评测报告。"
+            echo "请按 evals/README.md 执行回归评测，并将报告落盘到 evals/reports/（复制 TEMPLATE.md 填写）。"
+            echo "若本次修改不影响智能体行为（如纯排版、文档错别字），可在 PR 描述中加 skip-eval 标签并在 commit message 说明。"
+            exit 1
+          fi
+          echo "评测门禁通过。"
