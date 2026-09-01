@@ -30,7 +30,8 @@ ai-agent-kit/
 │       ├── 04-subagent-isolation.md
 │       └── 05-red-line-check.md
 ├── references/
-│   └── ai-methodology.md       # 完整方法论（8 节，可当 PPT 大纲）
+│   ├── ai-methodology.md       # 完整方法论（8 节，可当 PPT 大纲）
+│   └── eval-framework.md       # 评测体系（如何评估指南的进化程度）
 ├── scripts/
 │   └── sync-to-target.sh       # 同步到其他仓库的脚本（目标可配置）
 └── .github/workflows/
@@ -78,7 +79,7 @@ ai-agent-kit/
 ## 成熟度自评（任何团队可对照）
 
 - ✅ 已具备：指南层、技能/SOP 层、版本化产物、子任务拆分、上下文工程、人审节点、调试/验证/重构/探索四类编码技能、红线机器化示例。
-- ❌ 仍可进化：① 意图未版本化（方案常留对话里）② 缺回归评测 ③ 红线示例需按项目实例化。
+- ❌ 仍可进化：① 意图未版本化（方案常留对话里）② 回归评测框架已设计（见 `references/eval-framework.md`），用例集待实例化 ③ 红线示例需按项目实例化。
 
 ## 与你的主项目的关系
 
