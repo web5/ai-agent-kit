@@ -1,7 +1,7 @@
 ---
 name: rd-digital-agent
-description: 通用数字人 Hub — 根据任务复杂度自动分派到 4 个子 Agent（brainstorm → plan → execute → review）。方案探索、内容创作、问题修复、重构等场景的入口。
-version: 3.0.0
+description: 通用数字人 Hub — 根据任务类型与复杂度自动分派到子技能（brainstorm → plan → execute → review 流水线，外加调试/重构/探索/验证门/审查）。方案探索、内容创作、问题修复、重构等场景的入口。
+version: 4.0.0
 ---
 
 # 通用数字人 Hub
@@ -23,23 +23,40 @@ version: 3.0.0
   │                                         ↓
   │                                      .skills/rd-execute → rd-review
   │
+  ├─ 报错 / 测试失败 / 意外行为 ───────→ .skills/systematic-debugging
+  │                                         ↓ 根因修复后
+  │                                      .skills/verification-before-completion
+  │
+  ├─ "重构" / "清理" / 消除重复 ───────→ .skills/incremental-refactoring
+  │                                         ↓ 全量回归后
+  │                                      .skills/verification-before-completion
+  │
+  ├─ "X 在哪实现" / 理解项目结构 ──────→ .skills/code-explore（只读探索）
+  │
   ├─ 小改动 / "修 bug" / 简单任务 ─────→ .skills/rd-execute（直连）
   │                                         ↓
   │                                      .skills/rd-review
   │
   ├─ 架构 / 选型 / 安全 / 信息结构 ────→ .skills/tech-review（辅助审查）
   │
+  ├─ 任何交付前收尾 ──────────────────→ .skills/verification-before-completion
+  │
   └─ 写作/产出任务（所有）────────────→ 加载项目自有纪律（可选，本模板不内置）
 ```
 
-## 四个 Agent（协作模式）
+## 子技能矩阵
 
-| Agent | Skill 文件 | 职责 |
-|-------|-----------|------|
-| 🧠 Brainstorm | `rd-brainstorm/SKILL.md` | 探索方案选项 |
-| 📋 Plan | `rd-plan/SKILL.md` | 细化为任务列表 |
-| ⚡ Execute | `rd-execute/SKILL.md` | 逐项实现（迭代-校验） |
-| 🔍 Review | `rd-review/SKILL.md` | 自检产物质量 |
+| 类别 | Skill | 职责 |
+|------|-------|------|
+| 流水线 | `rd-brainstorm` | 探索方案选项 |
+| 流水线 | `rd-plan` | 细化为任务列表 |
+| 流水线 | `rd-execute` | 逐项实现（TDD 迭代-校验） |
+| 流水线 | `rd-review` | 自检产物质量 |
+| 质量门 | `verification-before-completion` | 完成前强制验证（一切交付的收尾门） |
+| 调试 | `systematic-debugging` | 四阶段根因分析，禁止报错即改 |
+| 重构 | `incremental-refactoring` | 测试保护下小步重构 |
+| 探索 | `code-explore` | 代码库理解与影响面分析（只读） |
+| 审查 | `tech-review` | 方案/结构/安全多维度审查 |
 
 > 写作/产出纪律（如 Think First / Simplicity）为可选层，由各项目自行补充，不内置在本模板。
 
@@ -60,17 +77,17 @@ version: 3.0.0
   ├─ 主 Agent（rd-digital-agent）← 只维护"当前阶段 + 结果摘要"
   │     │                         上下文不会被子 Agent 的细节撑爆
   │     │
-  │     ├── task(name="brainstorm-agent", team_name="superpowers-tdd")  ← 独立上下文
+  │     ├── task(name="brainstorm-agent", team_name="<your-team>")  ← 独立上下文
   │     │     返回: 方案摘要（2-3 句话）
   │     │
-  │     ├── task(name="plan-agent", team_name="superpowers-tdd")        ← 独立上下文
+  │     ├── task(name="plan-agent", team_name="<your-team>")        ← 独立上下文
   │     │     返回: TODO 列表摘要
   │     │
-  │     ├── task(name="execute-agent", team_name="superpowers-tdd")     ← 独立上下文
+  │     ├── task(name="execute-agent", team_name="<your-team>")     ← 独立上下文
   │     │     └─ 内部加载项目自有写作/产出纪律（可选）
   │     │     返回: 变更摘要 + 自检结果
   │     │
-  │     └── task(name="review-agent", team_name="superpowers-tdd")      ← 独立上下文
+  │     └── task(name="review-agent", team_name="<your-team>")      ← 独立上下文
   │           返回: 审查报告摘要
   │
   └─ 主 Agent 汇总 → 输出给用户
@@ -78,24 +95,24 @@ version: 3.0.0
 
 ### 启动方式
 
-团队 `superpowers-tdd` 已创建，只需用 `task(name="xxx", team_name="superpowers-tdd")` 启动子 Agent。
+在宿主平台创建团队后，将下方占位符 `<your-team>` 替换为实际团队名，用 `task(name="xxx", team_name="<your-team>")` 启动子 Agent。
 
 ```javascript
 // 示例：完整流水线
 // 1. 主 Agent 收到需求后，spawn 子 Agent（每个独立上下文）
-task(name="brainstorm-agent", team_name="superpowers-tdd", mode="plan",
+task(name="brainstorm-agent", team_name="<your-team>", mode="plan",
   prompt="需求: xxx。请输出 2-3 个方案并推荐")
 
 // 2. 用户选方案后，spawn plan-agent
-task(name="plan-agent", team_name="superpowers-tdd", mode="plan",
+task(name="plan-agent", team_name="<your-team>", mode="plan",
   prompt="选定方案: xxx。请拆分为可执行的 TODO 列表")
 
 // 3. 用户确认后，spawn execute-agent（加载项目自有纪律，可选）
-task(name="execute-agent", team_name="superpowers-tdd", mode="acceptEdits",
+task(name="execute-agent", team_name="<your-team>", mode="acceptEdits",
   prompt="实现: xxx。遵循迭代-校验工作流。")
 
 // 4. 执行完成后，spawn review-agent
-task(name="review-agent", team_name="superpowers-tdd", mode="plan",
+task(name="review-agent", team_name="<your-team>", mode="plan",
   prompt="审查变更: xxx")
 ```
 

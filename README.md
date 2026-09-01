@@ -17,6 +17,10 @@ ai-agent-kit/
 │   ├── rd-execute/             #   逐项实现（迭代-校验）
 │   ├── rd-review/              #   自检产物质量
 │   ├── tech-review/            #   方案/结构/数据/安全审查
+│   ├── systematic-debugging/   #   系统化调试（四阶段根因分析）
+│   ├── verification-before-completion/  # 完成前强制验证门
+│   ├── code-explore/           #   代码库探索（索引优先/影响面分析）
+│   ├── incremental-refactoring/  # 测试保护下的增量重构
 │   └── user-memory/            #   用户偏好与项目上下文记忆
 ├── rules/
 │   └── general/                # 通用红线规则（5 条，方法论级）
@@ -30,7 +34,7 @@ ai-agent-kit/
 ├── scripts/
 │   └── sync-to-target.sh       # 同步到其他仓库的脚本（目标可配置）
 └── .github/workflows/
-    └── sync-to-target.yml      # 推送 main 时自动开 PR 到目标仓库
+    └── sync-to-target.yml      # 推送 master 时自动开 PR 到目标仓库
 ```
 
 ## 核心方法论（一句话版）
@@ -39,8 +43,9 @@ ai-agent-kit/
 - **三层规则**：指南 → 技能/SOP → 红线机器化。
 - **循环 Loop**：每个阶段落盘版本化产物，下一阶段自动读取。
 - **版本化产物链**：intent → spec → 执行 → 带审查记录的交付 → 复盘。
-- **子任务隔离**：复杂任务拆给独立上下文，主线程只留摘要。
+- **上下文工程**：上下文是有限资源——即时加载、定期压缩、结论落盘；复杂任务拆给独立上下文，主线程只留摘要。
 - **人审节点**：意图 / 大纲 / 交付前，三处把关。
+- **验证优先**：完成声明 = 验证证据，禁止「应该没问题」。
 
 ## 怎么用
 
@@ -60,7 +65,7 @@ ai-agent-kit/
 
 ## 同步到其他仓库（可选）
 
-可将本仓库推送到 `main` 时，自动把 `skills/`、`rules/`、`references/`、`AGENT.md` 拷贝到目标仓库的 `.codebuddy/agent-kit/` 并开 PR（幂等，无变更则跳过）。
+可将本仓库推送到 `master` 时，自动把 `skills/`、`rules/`、`references/`、`AGENT.md` 拷贝到目标仓库的 `.codebuddy/agent-kit/` 并开 PR（幂等，无变更则跳过）。
 
 前置条件（在 ai-agent-kit 仓库的 Settings → Secrets/Variables 配置）：
 - **Secret** `SYNC_TOKEN`：对目标仓库有 write 权限的 PAT。
@@ -72,8 +77,8 @@ ai-agent-kit/
 
 ## 成熟度自评（任何团队可对照）
 
-- ✅ 已具备：指南层、技能/SOP 层、版本化产物、子任务拆分、人审节点。
-- ❌ 仍可进化：① 意图未版本化（方案常留对话里）② 红线未机器化（靠自觉）③ 缺回归评测 ④ 缺固定审查顺序。
+- ✅ 已具备：指南层、技能/SOP 层、版本化产物、子任务拆分、上下文工程、人审节点、调试/验证/重构/探索四类编码技能、红线机器化示例。
+- ❌ 仍可进化：① 意图未版本化（方案常留对话里）② 缺回归评测 ③ 红线示例需按项目实例化。
 
 ## 与你的主项目的关系
 

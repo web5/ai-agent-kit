@@ -1,7 +1,7 @@
 ---
 name: rd-execute
-description: TDD 执行 Agent — 严格遵循红→绿→重构循环，智能调度子代理，逐项完成任务列表。触发：开始实现、写代码、TDD。
-version: 1.0.0
+description: TDD 执行 Agent — 严格遵循红→绿→重构循环，智能调度子代理，逐项完成任务列表，收尾走 verification-before-completion 强制验证。触发：开始实现、写代码、TDD。
+version: 1.1.0
 ---
 
 # ⚡ Execute Agent（TDD 开发执行）
@@ -27,20 +27,16 @@ TODO 列表
   3. REFACTOR → 优化代码，测试保持绿
   4. 标记完成
   ↓
-全部完成后 → 调用 rd-review Agent
+全部完成后 → .skills/verification-before-completion 强制验证
+  ↓
+验证通过 → 调用 rd-review Agent
 ```
 
 ## 校验规则
 
-### 什么必须校验
-- 交互 / 调用逻辑
-- 纯函数 / 转换逻辑
-- 核心业务 / 处理逻辑
-
-### 什么不校验
-- 模板 / 视图渲染
-- 入口装配（集成校验可选）
-- 第三方库内部行为
+测试策略（什么必须校验 / 不校验）详见 `references/test-strategy.md`。核心：
+- 校验对外可见的行为，不校验实现细节
+- 宣称通过必须附实际运行结果（对接 `verification-before-completion`）
 
 ### 子代理调度
 
@@ -64,4 +60,4 @@ TODO 列表
 
 ## 接管规则
 
-全部 TODO 完成后，调用 `rd-review` 自检。
+全部 TODO 完成后，先走 `verification-before-completion` 验证，再调用 `rd-review` 自检。
