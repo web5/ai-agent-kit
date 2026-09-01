@@ -11,7 +11,7 @@ ai-agent-kit/
 ├── AGENT.md                    # 智能体常驻指南（始终加载的操作总则）
 ├── README.md                   # 本文件
 ├── skills/                     # 工作流引擎（数字人的「怎么干」）
-│   ├── rd-digital-agent/       #   Hub：按复杂度路由到下列子技能
+│   ├── rd-digital-agent/       #   Hub：按复杂度分派到下列子技能
 │   ├── rd-brainstorm/          #   探索方案选项
 │   ├── rd-plan/                #   细化为任务列表
 │   ├── rd-execute/             #   逐项实现（迭代-校验）
@@ -51,7 +51,7 @@ ai-agent-kit/
 - `rules/general/*` → 红线规则
 - `references/ai-methodology.md` → 完整参考
 
-### 2. 套用到具体工程
+### 2. 套用到具体项目
 - 编辑 `skills/rd-digital-agent/SKILL.md` 里的「项目上下文」占位，换成你的团队领域、术语规范与品牌语气等上下文。
 - 如需领域专属红线（如术语规范/引用标准/品牌语气），在 `rules/` 下新增对应子目录，不影响通用层。
 
@@ -64,17 +64,17 @@ ai-agent-kit/
 
 前置条件（在 ai-agent-kit 仓库的 Settings → Secrets/Variables 配置）：
 - **Secret** `SYNC_TOKEN`：对目标仓库有 write 权限的 PAT。
-- **Variable** `TARGET_REPO`（可选，默认本模板的源工程仓库）、`TARGET_BASE`（可选，默认 `master`）。
+- **Variable** `TARGET_REPO`（可选，默认本模板的源项目仓库）、`TARGET_BASE`（可选，默认 `master`）。
 
 也可本地手动触发：`SYNC_TOKEN=xxx TARGET_REPO=owner/repo bash scripts/sync-to-target.sh`。
 
-> 默认目标即本模板的源工程（web_system），可按需改为任意仓库。
+> 默认目标即本模板的源项目（web_system），可按需改为任意仓库。
 
 ## 成熟度自评（任何团队可对照）
 
 - ✅ 已具备：指南层、技能/SOP 层、版本化产物、子任务拆分、人审节点。
 - ❌ 仍可进化：① 意图未版本化（方案常留对话里）② 红线未机器化（靠自觉）③ 缺回归评测 ④ 缺固定审查顺序。
 
-## 与你的主工程的关系
+## 与你的主项目的关系
 
-本模板从某个具体工程抽象而来：保留 workflow 型 skills 与三层结构，剔除工程/业务专属规则，使数字人能力可被任意项目复用。同步机制把本仓库的演进持续回流到目标工程的 `.codebuddy/agent-kit/`，互不覆盖。
+本模板从某个具体项目抽象而来：保留 workflow 型 skills 与三层结构，剔除工程/业务专属规则，使数字人能力可被任意项目复用。同步机制把本仓库的演进持续回流到目标项目的 `.codebuddy/agent-kit/`，互不覆盖。

@@ -36,4 +36,4 @@
 - `rules/general/*` → 红线规则
 - `references/ai-methodology.md` → 完整方法论
 
-加载到具体工程时，将 `skills/rd-digital-agent/references/project-context.md` 替换为该工程信息。
+加载到具体团队/项目时，将 `skills/rd-digital-agent/references/project-context.md` 替换为该团队/项目的信息。

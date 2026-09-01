@@ -1,12 +1,12 @@
 ---
 name: rd-digital-agent
-description: 研发数字人 Hub — 根据任务复杂度自动路由到 4 个子 Agent（brainstorm → plan → execute → review）。方案探索、功能开发、缺陷修复、重构等场景的入口。
+description: 通用数字人 Hub — 根据任务复杂度自动分派到 4 个子 Agent（brainstorm → plan → execute → review）。方案探索、内容创作、问题修复、重构等场景的入口。
 version: 3.0.0
 ---
 
-# 研发数字人 Hub
+# 通用数字人 Hub
 
-## 路由决策
+## 分派决策
 
 ```
 用户请求
@@ -27,9 +27,9 @@ version: 3.0.0
   │                                         ↓
   │                                      .skills/rd-review
   │
-  ├─ 架构 / 选型 / 安全 / 数据结构 ────→ .skills/tech-review（辅助审查）
+  ├─ 架构 / 选型 / 安全 / 信息结构 ────→ .skills/tech-review（辅助审查）
   │
-  └─ 编码/写作任务（所有）────────────→ 加载工程自有纪律（可选，本模板不内置）
+  └─ 写作/产出任务（所有）────────────→ 加载项目自有纪律（可选，本模板不内置）
 ```
 
 ## 四个 Agent（协作模式）
@@ -41,7 +41,7 @@ version: 3.0.0
 | ⚡ Execute | `rd-execute/SKILL.md` | 逐项实现（迭代-校验） |
 | 🔍 Review | `rd-review/SKILL.md` | 自检产物质量 |
 
-> 编码/写作纪律（如 Think First / Simplicity）为可选层，由各工程自行补充，不内置在本模板。
+> 写作/产出纪律（如 Think First / Simplicity）为可选层，由各项目自行补充，不内置在本模板。
 
 ## 多 Agent 协作团队模式（Context 隔离）
 
@@ -67,7 +67,7 @@ version: 3.0.0
   │     │     返回: TODO 列表摘要
   │     │
   │     ├── task(name="execute-agent", team_name="superpowers-tdd")     ← 独立上下文
-  │     │     └─ 内部加载工程自有编码/写作纪律（可选）
+  │     │     └─ 内部加载项目自有写作/产出纪律（可选）
   │     │     返回: 变更摘要 + 自检结果
   │     │
   │     └── task(name="review-agent", team_name="superpowers-tdd")      ← 独立上下文
@@ -90,7 +90,7 @@ task(name="brainstorm-agent", team_name="superpowers-tdd", mode="plan",
 task(name="plan-agent", team_name="superpowers-tdd", mode="plan",
   prompt="选定方案: xxx。请拆分为可执行的 TODO 列表")
 
-// 3. 用户确认后，spawn execute-agent（加载工程自有纪律，可选）
+// 3. 用户确认后，spawn execute-agent（加载项目自有纪律，可选）
 task(name="execute-agent", team_name="superpowers-tdd", mode="acceptEdits",
   prompt="实现: xxx。遵循迭代-校验工作流。")
 
@@ -103,7 +103,7 @@ task(name="review-agent", team_name="superpowers-tdd", mode="plan",
 
 ## 项目上下文（按需替换）
 
-> 本智能体为**通用数字人模板**，不绑定具体项目。加载到实际工程时，把下方占位替换成该工程的目录结构、端口、品牌规范即可。
+> 本智能体为**通用数字人模板**，不绑定具体项目。加载到具体团队/项目时，把下方占位替换成该项目的资料结构、术语库、品牌语气即可。
 
 ```
 <your-project>/
@@ -113,8 +113,8 @@ task(name="review-agent", team_name="superpowers-tdd", mode="plan",
 ```
 
 通用原则（适用于任何项目）：
-- 同类修改必须扫全量（Monorepo 铁律），不只在手头文件改；
-- 三层超时/校验/日志等横切关注点，统一收口到共享包，禁止各端拷贝。
+- 同类修改必须扫全量，不只在手头文件改；
+- 校验 / 格式 / 命名等横切约定，统一收口到共享文档，禁止各处拷贝。
 
 ## 共享参考文档
 
@@ -122,7 +122,7 @@ task(name="review-agent", team_name="superpowers-tdd", mode="plan",
 
 | 文档 | 何时加载 |
 |------|---------|
-| `project-context.md` | 加载到具体工程时，记录其结构/技术栈/设计常量 |
+| `project-context.md` | 加载到具体项目时，记录其资料结构/领域/品牌语气 |
 | `writing-standards.md` | 需要确认命名/格式/表达约定 |
 | `spec-workflow.md` | 需要 spec 文档模板 |
 | `iterate-verify-workflow.md` | 需要「草稿-校验-精修」迭代方法 |
