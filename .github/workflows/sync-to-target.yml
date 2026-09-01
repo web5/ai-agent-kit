@@ -1,0 +1,18 @@
+name: sync-to-target
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync to target repo
+        env:
+          SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
+          TARGET_REPO: ${{ vars.TARGET_REPO || 'web5/web_system' }}
+          TARGET_BASE: ${{ vars.TARGET_BASE || 'master' }}
+        run: bash scripts/sync-to-target.sh

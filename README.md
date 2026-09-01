@@ -28,9 +28,9 @@ ai-agent-kit/
 ├── references/
 │   └── ai-methodology.md       # 完整方法论（8 节，可当 PPT 大纲）
 ├── scripts/
-│   └── sync-to-web-system.sh   # 同步回 web_system 的脚本
+│   └── sync-to-target.sh       # 同步到其他仓库的脚本（目标可配置）
 └── .github/workflows/
-    └── sync-to-web-system.yml  # 推送 main 时自动开 PR 回 web_system
+    └── sync-to-target.yml      # 推送 main 时自动开 PR 到目标仓库
 ```
 
 ## 核心方法论（一句话版）
@@ -58,22 +58,23 @@ ai-agent-kit/
 ### 3. 分享给团队
 `references/ai-methodology.md` 已是成稿的方法论分享材料，可直接当内部分享 PPT 大纲或 WIKI 首页。
 
-## 同步回 web_system
+## 同步到其他仓库（可选）
 
-本仓库推送到 `main` 时，GitHub Actions（`sync-to-web-system.yml`）会自动把 `skills/`、`rules/`、`references/`、`AGENT.md` 拷贝到 web_system 的 `.codebuddy/agent-kit/` 并开 PR（幂等，无变更则跳过）。
+可将本仓库推送到 `main` 时，自动把 `skills/`、`rules/`、`references/`、`AGENT.md` 拷贝到目标仓库的 `.codebuddy/agent-kit/` 并开 PR（幂等，无变更则跳过）。
 
 前置条件（在 ai-agent-kit 仓库的 Settings → Secrets/Variables 配置）：
-- **Secret** `SYNC_TOKEN`：对 `web5/web_system` 有 write 权限的 PAT。
-- **Variable** `WEBSYSTEM_REPO`（可选，默认 `web5/web_system`）、`WEBSYSTEM_BASE`（可选，默认 `master`）。
+- **Secret** `SYNC_TOKEN`：对目标仓库有 write 权限的 PAT。
+- **Variable** `TARGET_REPO`（可选，默认本模板的源工程仓库）、`TARGET_BASE`（可选，默认 `master`）。
 
-也可本地手动触发：`SYNC_TOKEN=xxx bash scripts/sync-to-web-system.sh`。
+也可本地手动触发：`SYNC_TOKEN=xxx TARGET_REPO=owner/repo bash scripts/sync-to-target.sh`。
+
+> 默认目标即本模板的源工程（web_system），可按需改为任意仓库。
 
 ## 成熟度自评（任何团队可对照）
 
 - ✅ 已具备：指南层、技能/SOP 层、版本化产物、子任务拆分、人审节点。
 - ❌ 仍可进化：① 意图未版本化（方案常留对话里）② 红线未机器化（靠自觉）③ 缺回归评测 ④ 缺固定审查顺序。
 
-## 与 web_system 原 .codebuddy 的关系
+## 与你的主工程的关系
 
-web_system 的 `.codebuddy/` 含 100+ 工程专属规则 + 7 个 skills。本仓库是其**通用方法论萃取版**：
-保留 workflow 型 skills 与三层结构，剔除工程/业务专属规则，使数字人能力可被任意项目复用。同步机制把本仓库的演进持续回流到 web_system 的 `.codebuddy/agent-kit/`，互不覆盖。
+本模板从某个具体工程抽象而来：保留 workflow 型 skills 与三层结构，剔除工程/业务专属规则，使数字人能力可被任意项目复用。同步机制把本仓库的演进持续回流到目标工程的 `.codebuddy/agent-kit/`，互不覆盖。

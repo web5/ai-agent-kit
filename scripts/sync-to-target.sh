@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# 将 ai-agent-kit 同步到 web_system 的 .codebuddy/agent-kit/
+# 将 ai-agent-kit 同步到目标仓库的 .codebuddy/agent-kit/
 # 机制：克隆目标仓库 → 拷贝产物到 .codebuddy/agent-kit/ → 无变更则跳过 → 开 PR（幂等）
 # 需要环境变量：SYNC_TOKEN（对目标仓库有 write 权限的 PAT）
+# 默认目标为 web_system（可通过 TARGET_REPO 覆盖为任意仓库）
 set -euo pipefail
 
-TARGET_REPO="${WEBSYSTEM_REPO:-web5/web_system}"
-BASE_BRANCH="${WEBSYSTEM_BASE:-master}"
+TARGET_REPO="${TARGET_REPO:-web5/web_system}"
+BASE_BRANCH="${TARGET_BASE:-master}"
 PR_BRANCH="sync/agent-kit"
 SRC_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
