@@ -1,0 +1,128 @@
+---
+name: rd-digital-agent
+description: 研发数字人 Hub — 根据任务复杂度自动路由到 4 个子 Agent（brainstorm → plan → execute → review）。TDD 开发、修复 Bug、添加功能、重构等场景的入口。
+version: 3.0.0
+---
+
+# 研发数字人 Hub
+
+## 路由决策
+
+```
+用户请求
+  │
+  ├─ "怎么做" / "设计方案" / 模糊需求 ──→ .skills/rd-brainstorm
+  │                                         ↓ 用户选方案后
+  │                                      .skills/rd-plan
+  │                                         ↓ 用户确认后
+  │                                      .skills/rd-execute
+  │                                         ↓ 完成后
+  │                                      .skills/rd-review
+  │
+  ├─ "拆任务" / "细化" / 已有明确方案 ──→ .skills/rd-plan
+  │                                         ↓
+  │                                      .skills/rd-execute → rd-review
+  │
+  ├─ 小改动 / "修 bug" / 简单 CRUD ────→ .skills/rd-execute（直连）
+  │                                         ↓
+  │                                      .skills/rd-review
+  │
+  ├─ 架构 / 选型 / 安全 / 数据库设计 ──→ .skills/tech-review（辅助审查）
+  │
+  └─ 编码任务（所有）─────────────────→ 加载 Karpathy 编程准则
+       （在 rd-execute 执行时自动参考）
+```
+
+## 六个 Agent（Superpowers + Karpathy）
+
+| Agent | Skill 文件 | 职责 |
+|-------|-----------|------|
+| 🧠 Brainstorm | `rd-brainstorm/SKILL.md` | 探索方案选项 |
+| 📋 Plan | `rd-plan/SKILL.md` | 细化为任务列表 |
+| ⚡ Execute | `rd-execute/SKILL.md` | TDD 逐项实现 |
+| 🔍 Review | `rd-review/SKILL.md` | 自检代码质量 |
+| 🧭 Karpathy 准则 | `~/.codebuddy/skills/karpathy-coding-guidelines/SKILL.md` | 编码纪律（Think First / Simplicity / Surgical / Goal-Driven） |
+| 📚 Karpathy Wiki | `~/.codebuddy/skills/karpathy-llm-wiki/SKILL.md` | 持久化知识库管理 |
+
+## TDD 多 Agents 协作团队模式（Context 隔离）
+
+### 为什么需要子 Agent
+
+| 方式 | 问题 |
+|------|------|
+| 单 Agent 顺序执行 | 所有历史留在一个上下文，token 越积越多，回答质量下降 |
+| 子 Agent 并行/接力 | 每个 Agent 独立上下文，完成任务后释放，主 Agent 只保留摘要 |
+
+### 架构
+
+```
+用户请求
+  │
+  ├─ 主 Agent（rd-digital-agent）← 只维护"当前阶段 + 结果摘要"
+  │     │                         上下文不会被子 Agent 的细节撑爆
+  │     │
+  │     ├── task(name="brainstorm-agent", team_name="superpowers-tdd")  ← 独立上下文
+  │     │     返回: 方案摘要（2-3 句话）
+  │     │
+  │     ├── task(name="plan-agent", team_name="superpowers-tdd")        ← 独立上下文
+  │     │     返回: TODO 列表摘要
+  │     │
+  │     ├── task(name="execute-agent", team_name="superpowers-tdd")     ← 独立上下文
+  │     │     └─ 内部加载 Karpathy 准则（Think / Simplicity / Surgical / Goal-Driven）
+  │     │     返回: 变更摘要 + 测试结果
+  │     │
+  │     └── task(name="review-agent", team_name="superpowers-tdd")      ← 独立上下文
+  │           返回: 审查报告摘要
+  │
+  └─ 主 Agent 汇总 → 输出给用户
+```
+
+### 启动方式
+
+团队 `superpowers-tdd` 已创建，只需用 `task(name="xxx", team_name="superpowers-tdd")` 启动子 Agent。
+
+```javascript
+// 示例：完整流水线
+// 1. 主 Agent 收到需求后，spawn 子 Agent（每个独立上下文）
+task(name="brainstorm-agent", team_name="superpowers-tdd", mode="plan",
+  prompt="需求: xxx。请输出 2-3 个方案并推荐")
+
+// 2. 用户选方案后，spawn plan-agent
+task(name="plan-agent", team_name="superpowers-tdd", mode="plan",
+  prompt="选定方案: xxx。请拆分为可执行的 TODO 列表")
+
+// 3. 用户确认后，spawn execute-agent（加载 Karpathy 准则）
+task(name="execute-agent", team_name="superpowers-tdd", mode="acceptEdits",
+  prompt="TDD 实现: xxx。遵循 Karpathy 编程四原则。")
+
+// 4. 执行完成后，spawn review-agent
+task(name="review-agent", team_name="superpowers-tdd", mode="plan",
+  prompt="审查代码变更: xxx")
+```
+
+**关键**：子 Agent 完成后上下文即释放，主 Agent 只保存结果摘要。这比单 Agent 积累全部历史要轻量得多。
+
+## 项目上下文（按需替换）
+
+> 本智能体为**通用数字人模板**，不绑定具体项目。加载到实际工程时，把下方占位替换成该工程的目录结构、端口、品牌规范即可。
+
+```
+<your-project>/
+├── <模块A>
+├── <模块B>
+└── <共享包/配置>
+```
+
+通用原则（适用于任何项目）：
+- 同类修改必须扫全量（Monorepo 铁律），不只在手头文件改；
+- 三层超时/校验/日志等横切关注点，统一收口到共享包，禁止各端拷贝。
+
+## 共享参考文档
+
+位于 `rd-digital-agent/references/`（本模板未内置工程专属文档，加载时按需要补充）：
+
+| 文档 | 何时加载 |
+|------|---------|
+| `project-structure.md` | 需要了解项目布局 |
+| `coding-standards.md` | 需要确认命名/格式约定 |
+| `spec-workflow.md` | 需要 spec 文档模板 |
