@@ -1,0 +1,18 @@
+name: sync-to-web-system
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync to web_system
+        env:
+          SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
+          WEBSYSTEM_REPO: ${{ vars.WEBSYSTEM_REPO || 'web5/web_system' }}
+          WEBSYSTEM_BASE: ${{ vars.WEBSYSTEM_BASE || 'master' }}
+        run: bash scripts/sync-to-web-system.sh
