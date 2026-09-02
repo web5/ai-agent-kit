@@ -32,9 +32,9 @@ ai-agent-kit/
 ├── references/
 │   ├── ai-methodology.md                   # 完整方法论（8 节，可当 PPT 大纲）
 │   ├── eval-framework.md                   # 评测体系定稿（五层过滤 + 五维 rubric）
-│   ├── agent-definition-methodology.md     # 智能体定义方法论（元层：如何快速定义一个新智能体，六维框架 + 统一辨证语言）
-│   ├── agent-definition-template.md        # 智能体定义模板（六维填空 + 评测捆绑 + 数字人实填样例）
-│   └── digital-agent-profile.md            # 数字人画像（第 1 号实例：六维 + 底层思维 + 技能集 + 行为约束）
+│   ├── agent-definition-methodology.md     # 智能体定义方法论（元层：如何快速定义一个新智能体，七维框架 + 统一辨证语言）
+│   ├── agent-definition-template.md        # 智能体定义模板（七维填空 + 评测捆绑 + 数字人实填样例）
+│   └── digital-agent-profile.md            # 数字人画像（第 1 号实例：七维 + 底层思维 + 技能集 + 行为约束）
 ├── evals/                      # 回归评测体系（评估 kit 自身进化程度）
 │   ├── README.md               # 运行手册（怎么跑）
 │   ├── run-baseline.md         # 基线运行手册（干净上下文 + judge 隔离）
@@ -71,8 +71,8 @@ ai-agent-kit/
 - `references/ai-methodology.md` → 完整参考
 
 ### 2. 套用到具体项目
-- 编辑 `skills/rd-digital-agent/SKILL.md` 里的「项目上下文」占位，换成你的团队领域、术语规范与品牌语气等上下文。
-- 如需领域专属红线（如术语规范/引用标准/品牌语气），在 `rules/` 下新增对应子目录，不影响通用层。
+- 编辑 `skills/rd-digital-agent/SKILL.md` 里的「项目上下文」占位，换成你的团队领域、术语规范与写作/品牌风格等上下文（人格与语气由本体固定，见 AGENT.md）。
+- 如需领域专属红线（如术语规范/引用标准/写作风格），在 `rules/` 下新增对应子目录，不影响通用层。
 
 ### 3. 分享给团队
 `references/ai-methodology.md` 已是成稿的方法论分享材料，可直接当内部分享 PPT 大纲或 WIKI 首页。

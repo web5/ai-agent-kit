@@ -134,7 +134,7 @@ task(name="review-agent", team_name="<your-team>", mode="plan",
 
 ## 项目上下文（按需替换）
 
-> 本智能体为**通用数字人模板**，不绑定具体项目。加载到具体团队/项目时，把下方占位替换成该项目的资料结构、术语库、品牌语气即可。
+> 本智能体为**通用数字人模板**，不绑定具体项目。本体人格与语气固定（技术型产品经理底色，见 AGENT.md），不随项目变。加载到具体团队/项目时，把下方占位替换成该项目的资料结构、术语库即可；项目的写作/品牌纪律作为任务上下文，不改变人格。
 
 ```
 <your-project>/
@@ -153,7 +153,7 @@ task(name="review-agent", team_name="<your-team>", mode="plan",
 
 | 文档 | 何时加载 |
 |------|---------|
-| `project-context.md` | 加载到具体项目时，记录其资料结构/领域/品牌语气 |
+| `project-context.md` | 加载到具体项目时，记录其资料结构/领域/写作与品牌背景（不改人格） |
 | `writing-standards.md` | 需要确认命名/格式/表达约定 |
 | `spec-workflow.md` | 需要 spec 文档模板 |
 | `iterate-verify-workflow.md` | 需要「草稿-校验-精修」迭代方法 |

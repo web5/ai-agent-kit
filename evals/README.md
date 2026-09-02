@@ -4,6 +4,9 @@
 
 本目录是 `references/eval-framework.md`（评测体系定稿）的落地实现，五层结构见下。
 
+> **三层定位**：框架 = `references/eval-framework.md`（评测规则，唯一权威）；模板 = 本目录可复制填写的空白件（`golden-tasks/RUBRIC.md` 评分表、`reports/TEMPLATE.md` 报告、任务卡骨架）；实例 = `cases/*`、`golden-tasks/T1~T6`、历次报告（输入冻结、不可改，防漂移）。
+> **本 `evals/` 是「方法论评测」**：评测对象 = 本 kit 的方法论本身（用加载了本 kit 指南的 Agent 跑任务，验证方法论变更是否让行为变好），**不评测任何具体智能体产品**。具体智能体产品（当前：数字人 agent）属「技术产品型评测」，随其定义走（见 `agent-definition-methodology.md` §四），不并入本目录。
+
 ## 评什么（五层，由便宜到贵）
 
 | 层 | 对象 | 手段 | 成本 |
