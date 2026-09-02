@@ -48,10 +48,13 @@ version: 1.0.0
 ### Spec 文档（大功能）
 ```
 specs/<feature_name>/
-├── requirements.md    ← 用户故事 + EARS 验收标准
-├── design.md          ← 架构 / 数据 / API / 组件树
+├── requirements.md    ← 用户故事 + EARS 验收标准 + 需求辨证（thinking-checklist S1/S2）
+├── design.md          ← 架构 / 数据 / API / 组件树 + 假设与必然（thinking-checklist S3/F1-F4）
 └── tasks.md           ← 实施清单 + 验收关联
 ```
+
+> 落盘前先跑 `references/thinking-checklist.md`（辨证与本质思考：苏格拉底 / 第一性原理 / 芒格，按复杂度分层）。答不出的问题列为待确认交用户，禁止自行脑补。
+> requirements 定稿自查产品方案评审（`rd-digital-agent/references/product-review-checklist.md`）；design 定稿自查技术方案评审（`tech-review/references/review-checklist.md`）。
 
 ## 验收标准模板（EARS）
 

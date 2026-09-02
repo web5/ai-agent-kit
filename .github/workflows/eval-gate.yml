@@ -51,6 +51,10 @@ jobs:
           for s in rd-brainstorm rd-plan rd-execute rd-review systematic-debugging incremental-refactoring code-explore tech-review verification-before-completion; do
             [ -f "skills/$s/SKILL.md" ] || { echo "::error::决策树引用 skills/$s 但文件不存在"; fail=1; }
           done
+          # S6 红线与执行手段绑定：AGENT.md 红线条目须在技能检查清单中有对应执行项（防「只有口号、无执行」退化）
+          if grep -q '兜底' AGENT.md && ! grep -q '兜底' skills/rd-review/SKILL.md; then
+            echo "::error::AGENT.md 红线（兜底实现须先做第一性判断）缺少执行手段：skills/rd-review/SKILL.md 未含对应检查项"; fail=1
+          fi
           exit $fail
 
       - name: 评测报告门禁

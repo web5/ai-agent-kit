@@ -60,6 +60,20 @@ version: 4.0.0
 
 > 写作/产出纪律（如 Think First / Simplicity）为可选层，由各项目自行补充，不内置在本模板。
 
+## 评审链（方案质量门）
+
+产物从需求到实现依次过三道评审，按复杂度分级触发：
+
+1. **产品方案评审**（做不做对的事）—— 需求/产品方案
+   → `references/product-review-checklist.md`（AI 自查）→ 人在「设计确认」复核
+2. **技术方案评审**（怎么实现）—— design.md / 选型 / 架构
+   → `tech-review/references/review-checklist.md`（AI 自查，配合 tech-review 技能）
+3. **代码评审**（实现好不好）—— 执行完成后 → `rd-review`
+
+底层思考工具：`rd-plan/references/thinking-checklist.md`（苏格拉底辨证 / 第一性原理 / 芒格）——评审前自问、评审时复核答案质量。
+分级：日常小改动只跑 thinking-checklist 简化档；中大型 / 跨模块方案走完整评审链。
+红线的执行入口也在此挂载：兜底红线（无业务定义即显式报错）落在两清单的 A 项；辨证铁律（答不出 = 待确认）贯穿全程。
+
 ## 多 Agent 协作团队模式（Context 隔离）
 
 ### 为什么需要子 Agent
@@ -143,3 +157,4 @@ task(name="review-agent", team_name="<your-team>", mode="plan",
 | `writing-standards.md` | 需要确认命名/格式/表达约定 |
 | `spec-workflow.md` | 需要 spec 文档模板 |
 | `iterate-verify-workflow.md` | 需要「草稿-校验-精修」迭代方法 |
+| `product-review-checklist.md` | 产品方案评审（需求/方案进技术评审前、设计确认节点） |

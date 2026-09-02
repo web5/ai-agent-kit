@@ -5,7 +5,11 @@ trigger: 选型、结构、信息、交付物、安全、发布、重构、方�
 version: 1.0.0
 ---
 
-# 方案审查 (Tech Review)
+# 技术方案评审 (Tech Review / Design Review)
+
+> 定位：评审链中「怎么实现」一环 —— 产品方案评审（做不做对的事）→ **本技能（怎么实现）** → rd-review（实现好不好）。
+> 与 rd-review 分工：本技能审方案（架构/选型/结构/契约/风险），rd-review 审实现代码。
+> 详细检查清单：`references/review-checklist.md`（评审前逐项自查，材料须自足）。
 
 ## 何时触发
 
@@ -50,7 +54,12 @@ version: 1.0.0
 - 关键修改是否有记录 / 版本？
 - 约定是否可配置 / 集中管理？
 
-详细标准见 `references/design-principles.md`；逐项检查见 `references/review-checklist.md`。
+### 6. 前提与反例（辨证复核）
+- 方案底线假设是否显式标注并验证（`thinking-checklist.md` S3/F1/F3）？
+- 反例 / 必然失败清单是否被回应与规避（S5/M1），还是走过场？
+- 能力圈外的决策是否已声明并转交确认（M3）？
+
+详细标准见 `references/design-principles.md`；辨证问题见 `skills/rd-plan/references/thinking-checklist.md`；逐项检查见 `references/review-checklist.md`。
 
 ---
 
