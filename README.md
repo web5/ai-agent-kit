@@ -33,7 +33,8 @@ ai-agent-kit/
 │   ├── ai-methodology.md                   # 完整方法论（8 节，可当 PPT 大纲）
 │   ├── eval-framework.md                   # 评测体系定稿（五层过滤 + 五维 rubric）
 │   ├── agent-definition-methodology.md     # 智能体定义方法论（元层：如何快速定义一个新智能体，六维框架 + 统一辨证语言）
-│   └── agent-definition-template.md        # 智能体定义模板（六维填空 + 评测捆绑 + 数字人实填样例）
+│   ├── agent-definition-template.md        # 智能体定义模板（六维填空 + 评测捆绑 + 数字人实填样例）
+│   └── digital-agent-profile.md            # 数字人画像（第 1 号实例：六维 + 底层思维 + 技能集 + 行为约束）
 ├── evals/                      # 回归评测体系（评估 kit 自身进化程度）
 │   ├── README.md               # 运行手册（怎么跑）
 │   ├── run-baseline.md         # 基线运行手册（干净上下文 + judge 隔离）
