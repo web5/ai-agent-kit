@@ -78,7 +78,7 @@ version: 4.1.0
 4. **代码评审**（实现好不好）—— 执行完成后 → `rd-review`
 
 底层思考工具：`rd-plan/references/thinking-checklist.md`（苏格拉底辨证 / 第一性原理 / 芒格）——评审前自问、评审时复核答案质量。
-分级：日常小改动只跑 thinking-checklist 简化档；中大型 / 跨模块方案走完整评审链。
+分级：日常小改动只跑 thinking-checklist 简化档（最小交付卡 4 行仍必答）；中大型 / 跨模块方案走完整评审链。**分级只压缩过程仪式，不豁免「交付物定义 + 验证判据先行」两件套**（开工前置不变量，见 AGENT.md；Anthropic 口径落点见 `references/anthropic-workflow-mapping.md`）。
 红线的执行入口也在此挂载：兜底红线（无业务定义即显式报错）落在两清单的 A 项；辨证铁律（答不出 = 待确认）贯穿全程。
 
 ## 交付门禁（写码前强制校验）

@@ -36,6 +36,7 @@ ai-agent-kit/
 │   ├── agent-definition-methodology.md     # 智能体定义方法论（元层：如何快速定义一个新智能体，七维框架 + 统一辨证语言）
 │   ├── agent-definition-template.md        # 智能体定义模板（七维填空 + 评测捆绑 + 数字人实填样例）
 │   ├── digital-agent-profile.md            # 数字人画像（第 1 号实例：七维 + 底层思维 + 技能集 + 行为约束）
+│   ├── anthropic-workflow-mapping.md       # Anthropic 工作方法论落点映射（每任务：交付物 + 验证判据先行）
 │   ├── fe-dev-common.md                    # 前端开发通用技能与规则（业界通用能力包）
 │   └── be-dev-common.md                    # 后端开发通用技能与规则（业界通用能力包）
 ├── digital-agent-eval/         # 数字人技术产品型评测（定义维验收，独立于 evals/）
@@ -64,6 +65,24 @@ ai-agent-kit/
 - **上下文工程**：上下文是有限资源——即时加载、定期压缩、结论落盘；复杂任务拆给独立上下文，主线程只留摘要。
 - **人审节点**：意图 / 大纲 / 交付前，三处把关。
 - **验证优先**：完成声明 = 验证证据，禁止「应该没问题」。
+- **开工前置（不分级）**：任何任务动手前先定交付物定义与验证判据，验收判据先行、完成后逐条对照证据（详见「方法来源」节）。
+
+## 方法来源 · Anthropic 工作方法论引用
+
+本 kit 的「AI 协作工作方法论」吸收了 Anthropic 团队对 agentic coding 的建议（*Best practices for Claude Code*）：**给 agent 的每个任务，在开始前就要讲清交付物长什么样、验收/测试怎么跑**——让验证判据成为 agent 决定「何时算完成」的依据（"Give Claude a way to verify its work" / "If you can't verify it, don't ship it"）。
+
+本地实现把它翻译成自己的语言并落到每一层：
+
+| Anthropic 说法 | 本 kit 语言 | 落点 |
+|---|---|---|
+| 每个任务开工前明确交付物与验收判据 | 做成定义 + 交付物清单 + 验证判据（**开工前置 · 不分级**） | `AGENT.md`「开工前置」；`skills/rd-plan/references/thinking-checklist.md` 简化档 · 最小交付卡 |
+| 测试用例写进任务再动手 | TDD RED（先写失败测试）→ GREEN | `skills/rd-execute/SKILL.md` |
+| 展示证据而非口头宣称成功 | 完成声明 = 验证证据 | `skills/verification-before-completion/SKILL.md` |
+| spec 以端到端验证步骤收尾 | EARS 验收标准入 `requirements.md`；评测任务卡 = 固定输入 + 期望产物 + 评分点 | `skills/rd-plan/SKILL.md`；`digital-agent-eval/golden-tasks/` |
+
+逐层落点审计（每条主张对应到文件与行、含已知缺口）见 [`references/anthropic-workflow-mapping.md`](references/anthropic-workflow-mapping.md)。
+
+> 外部引用：Anthropic · *Best practices for Claude Code* — <https://www.anthropic.com/engineering/claude-code-best-practices>
 
 ## 怎么用
 
