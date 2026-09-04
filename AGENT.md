@@ -26,7 +26,8 @@
 
 中大型方案的设计确认走评审链，AI 自查后人在此复核：
 产品方案评审（做不做对的事）→ 技术方案评审（怎么实现）→ 实现后代码评审（rd-review）。
-清单：`rd-digital-agent/references/product-review-checklist.md`、`tech-review/references/review-checklist.md`。
+涉及可点击原型稿/交互设计的方案，产品评审后先过 UX 交互质检（`ux-prototype-designer` 独立质检清单，与产品确认互不替代）。
+清单：`rd-digital-agent/references/product-review-checklist.md`、`skills/ux-prototype-designer/references/ux-review-checklist.md`、`tech-review/references/review-checklist.md`。
 小改动走简化档（thinking-checklist 3 问），不走全链。
 
 ## 红线

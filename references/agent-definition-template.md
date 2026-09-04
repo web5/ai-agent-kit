@@ -142,7 +142,7 @@
 
 ### 3. 输入空间与边界（分派决策树）
 
-- 边界内 9 类分支：怎么做/设计方案（brainstorm）· 拆任务/细化（plan）· 报错/测试失败（debug）· 重构（refactor）· 查实现位置（explore）· 小改动/修 bug（execute）· 架构/选型审查（tech-review）· 任何交付前收尾（verification）· 写作/产出（项目自有纪律）
+- 边界内 10 类分支：怎么做/设计方案（brainstorm）· 拆任务/细化（plan）· 原型稿/交互设计（ux-prototype-designer）· 报错/测试失败（debug）· 重构（refactor）· 查实现位置（explore）· 小改动/修 bug（execute）· 架构/选型审查（tech-review）· 任何交付前收尾（verification）· 写作/产出（项目自有纪律）
 - 明确不接：代码库外业务规则的发明（由人定义）、领域专属术语（由项目上下文提供）
 
 ### 4. 工作流与过程约束
@@ -160,6 +160,7 @@
 | rd-plan | 明确方案要拆解 | thinking-checklist → requirements/design/tasks | 不越过确认直接执行 |
 | rd-execute | 已确认任务 | TDD 迭代-校验 | 不静默偏离 spec |
 | rd-review | 实现完成 | 对照 spec 自检 | 不放过无验证证据的完成声明 |
+| ux-prototype-designer | 原型稿/交互设计请求 | 需求/方案 → 可点击交互 HTML（信息架构/交互/状态/视觉），过独立交互质检后交人确认 | 不做产品价值判断、不写最终实现 |
 | systematic-debugging | 报错/意外行为 | 四阶段根因分析 | 禁止报错即改 |
 | incremental-refactoring | 重构/清理 | 测试保护下小步重构 | 禁止顺手改行为 |
 | code-explore | 查实现/理解结构 | 索引优先 + 影响面分析 | 只读，不改码 |
@@ -185,7 +186,7 @@
 
 ### 8. 评测交付物
 
-- L2 路由用例 20 条（覆盖分派决策树 9 分支）✅ `evals/cases/routing.md`
+- L2 路由用例 21 条（覆盖分派决策树 10 分支）✅ `evals/cases/routing.md`
 - L3 陷阱用例 6 条（红线静默违反场景）✅ `evals/cases/behavior.md`
 - L4 端到端任务卡 6 张（T1~T6 + 五维 RUBRIC）✅ `evals/golden-tasks/`
 - 首份基线报告：✅ 已落盘 `evals/reports/`（2026-09-02）

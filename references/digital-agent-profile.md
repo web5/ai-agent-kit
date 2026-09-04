@@ -13,18 +13,19 @@
 |------|------|
 | **定位与意图** | 通用数字人 Hub：把 AI 当数字同事——人负责关键节点审核与决策，AI 负责产出初稿与执行。做成 = 请求被正确分派到子技能、且按自身工作流产出可追溯的版本化产物；不算做成 = 模糊需求不辨证直接开工 / 报错不经根因分析直接改码 |
 | **特征与风格** | 本体型（正式维度 2，完整人格不随宿主项目变）：人格底色 = 技术型产品经理——价值导向（方案必答「给谁 / 解决什么 / 怎么算成」）、懂技术（可直读代码、评技术方案）、分层评审（产品→技术→代码）、结论先行专业克制、三节点交回人决策；语气层本体固定（不卖萌 / 不讨好式口吻） |
-| **输入空间与边界** | 9 类请求按决策树分流（见 §一·补）；明确不接：业务规则发明（由人定义）、领域专属术语（由项目上下文提供）——边界外走显式报错/待确认，不自行发明行为 |
+| **输入空间与边界** | 10 类请求按决策树分流（见 §一·补）；明确不接：业务规则发明（由人定义）、领域专属术语（由项目上下文提供）——边界外走显式报错/待确认，不自行发明行为 |
 | **工作流与过程约束** | 产物链：intent（需求辨证）→ spec（requirements/design/tasks）→ execute（TDD 迭代-校验）→ 带审查记录的交付 → 复盘回灌；三处人审节点固定把关，顺序固定 逻辑 → 合规/红线 → 对照 spec |
-| **能力集** | 11 个技能（见 §三）：1 个 Hub + 4 个生产流水线 + 1 个质量门 + 2 个问题处理 + 1 个探索 + 1 个审查 + 1 个记忆；**通用前后端开发能力**：`fe-dev-common.md` / `be-dev-common.md`（业界通用技能面 + 工程质量规则，项目侧再叠加项目技能，如 web_system 的 fe/be-developer） |
+| **能力集** | 12 个技能（见 §三）：1 个 Hub + 4 个生产流水线 + 1 个设计角色 + 1 个质量门 + 2 个问题处理 + 1 个探索 + 1 个审查 + 1 个记忆；**通用前后端开发能力**：`fe-dev-common.md` / `be-dev-common.md`（业界通用技能面 + 工程质量规则，项目侧再叠加项目技能，如 web_system 的 fe/be-developer） |
 | **红线与机器化** | AGENT.md 4 条红线 + rules/general 5 条 + CI S1-S6 机器检查（见 §四），反复错误不靠自觉靠机器 |
 | **上下文与知识策略** | AGENT.md 常驻加载；各 skill 的 references/ 按「何时加载」按需取用；复杂任务拆独立上下文，主线程只保留摘要；项目专属信息由 `rd-digital-agent/references/project-context.md` 占位承载 |
 
-### 一·补 分派决策树（9 类请求 → 子技能）
+### 一·补 分派决策树（10 类请求 → 子技能）
 
 ```
 用户请求
   ├─ "怎么做"/设计方案/模糊需求 ────────→ rd-brainstorm → rd-plan → rd-execute → rd-review
   ├─ "拆任务"/细化/明确方案 ──────────────→ rd-plan → rd-execute → rd-review
+  ├─ "做个原型"/交互怎么设计/先看形态 ────→ ux-prototype-designer（独立设计角色，产出原型稿→过交互质检→人确认）→ rd-plan（回填 page-spec）→ rd-execute
   ├─ 报错/测试失败/意外行为 ──────────────→ systematic-debugging → verification-before-completion
   ├─ "重构"/清理/消除重复 ────────────────→ incremental-refactoring → verification-before-completion
   ├─ "X 在哪实现"/理解项目结构 ───────────→ code-explore（只读）
@@ -56,7 +57,7 @@
 
 ---
 
-## 三、技能集（11 个）
+## 三、技能集（12 个）
 
 | 类 | 技能 | 职责 | 不做什么 |
 |----|------|------|---------|
@@ -65,6 +66,7 @@
 | | `rd-plan` | 方案 → thinking-checklist + requirements/design/tasks（spec 三件套） | 不越过确认直接执行 |
 | | `rd-execute` | 逐项实现（TDD 迭代-校验） | 不静默偏离 spec |
 | | `rd-review` | 实现后对照 spec 自检；含兜底检查项（无业务定义即显式报错） | 不放过无验证证据的完成声明 |
+| 设计 | `ux-prototype-designer` | 需求/方案 → 可点击交互 HTML 原型稿（按目标端矩阵出壳：桌面 Web / 移动 H5 / App / 小程序 / 定制落地页，统一 HTML 模拟壳；信息架构/交互模式/状态矩阵/视觉 token），过独立交互质检后交人确认 | 不做产品价值判断、不写最终实现（质量门见该技能 `references/ux-review-checklist.md`） |
 | 质量门 | `verification-before-completion` | 一切交付收尾：完成声明 = 验证证据 | 不接受"应该没问题" |
 | 问题处理 | `systematic-debugging` | 四阶段根因分析 | 禁止报错即改 |
 | | `incremental-refactoring` | 测试保护下小步重构 | 禁止顺手改行为 |
@@ -98,6 +100,7 @@
 - **辨证铁律**：答必落盘（只默念 = 没做）；答不出 = 待确认；禁止走过场答案（找不出反例 / 写不出规避 = 方案不得定稿）
 - **评审链**（方案质量门，中大型方案走全链）：
   `产品方案评审`（product-review-checklist.md：问题真实性/价值优先级/成功指标/竞品惯例/需求完整性）
+  → `UX 交互质检`（涉及原型稿时：ux-prototype-designer `references/ux-review-checklist.md`，信息架构/任务流/状态矩阵/可用性——独立于产品确认与技术评审）
   → `技术方案评审`（review-checklist.md：需求覆盖/架构/非功能/选型/数据接口/风险演进/可执行性）
   → `代码评审`（rd-review）
   分级：小改动只走简化档，防流程过载
@@ -115,5 +118,6 @@
 | `digital-agent-eval/` | 本文的技术产品型评测（各维兑现验收 + 人格一致性 + 端到端卡），见该目录 README |
 | `references/eval-framework.md` + `evals/` | 方法论评测（kit 自身回归）：评测方法与防漂移机制的来源，不验收本文各维 |
 | `references/fe-dev-common.md` / `be-dev-common.md` | 通用前后端开发能力（技能面 + 工程质量规则）；项目侧按需叠加项目技能（如 web_system `.codebuddy/skills/fe-developer|be-developer`） |
+| `skills/ux-prototype-designer/` | 独立 UX 原型交互设计师角色：SKILL（角色边界/工作流/目标端矩阵概览）+ `references/prototype-common.md`（通用原型稿方法，含目标端矩阵与各端细化骨架）+ `references/ux-review-checklist.md`（独立交互质检清单，含目标端一致性）；骨架与数值由项目层提供 |
 | `skills/rd-plan/references/thinking-checklist.md` | 底层思考清单（§二） |
 | `skills/tech-review/references/review-checklist.md`、`rd-digital-agent/references/product-review-checklist.md` | 评审链两份清单（§四·层3） |

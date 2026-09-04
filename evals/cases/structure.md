@@ -33,7 +33,7 @@
 
 `skills/` 下每个 skill 必须被至少一处引用（分派决策树 / 路由用例 / README 目录结构），否则为孤儿。
 
-当前 11 个 skill 及引用来源：
+当前 12 个 skill 及引用来源：
 
 | Skill | 引用来源 |
 |-------|---------|
@@ -42,6 +42,7 @@
 | `rd-plan` | 决策树「拆任务/细化/明确方案」 |
 | `rd-execute` | 决策树「小改动/修 bug/简单任务」 |
 | `rd-review` | 决策树「自检产物质量」 |
+| `ux-prototype-designer` | 决策树「做个原型/交互怎么设计/先看形态」+ rd-plan §3.5 |
 | `systematic-debugging` | 决策树「报错/测试失败/意外行为」 |
 | `incremental-refactoring` | 决策树「重构/清理/消除重复」 |
 | `code-explore` | 决策树「X 在哪实现/理解结构」 |
@@ -69,7 +70,7 @@
 
 `rd-digital-agent/SKILL.md` 分派决策树中引用的每个子技能名，必须在 `skills/` 下存在对应 `SKILL.md`。
 
-判定：决策树引用 `.skills/xxx` 而 `skills/xxx/SKILL.md` 不存在 → 不通过（分派指向死链）。
+判定：决策树引用 `.skills/xxx` 而 `skills/xxx/SKILL.md` 不存在 → 不通过（分派指向死链）。`ux-prototype-designer` 为决策树新增分支，须在 `skills/ux-prototype-designer/SKILL.md` 存在。
 
 ## 判定与通过线
 

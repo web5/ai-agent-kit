@@ -16,6 +16,7 @@ ai-agent-kit/
 │   ├── rd-plan/                #   细化为任务列表
 │   ├── rd-execute/             #   逐项实现（迭代-校验）
 │   ├── rd-review/              #   自检产物质量
+│   ├── ux-prototype-designer/  #   UX 原型交互设计师（需求→可点击交互 HTML 原型稿 + 独立交互质检）
 │   ├── tech-review/            #   方案/结构/数据/安全审查
 │   ├── systematic-debugging/   #   系统化调试（四阶段根因分析）
 │   ├── verification-before-completion/  # 完成前强制验证门
@@ -37,6 +38,7 @@ ai-agent-kit/
 │   ├── digital-agent-profile.md            # 数字人画像（第 1 号实例：七维 + 底层思维 + 技能集 + 行为约束）
 │   ├── fe-dev-common.md                    # 前端开发通用技能与规则（业界通用能力包）
 │   └── be-dev-common.md                    # 后端开发通用技能与规则（业界通用能力包）
+├── digital-agent-eval/         # 数字人技术产品型评测（定义维验收，独立于 evals/）
 ├── evals/                      # 回归评测体系（评估 kit 自身进化程度）
 │   ├── README.md               # 运行手册（怎么跑）
 │   ├── run-baseline.md         # 基线运行手册（干净上下文 + judge 隔离）
@@ -109,8 +111,8 @@ ai-agent-kit/
 
 按融合后的 L1~L5 标尺自评：
 
-- ✅ L1 结构完整：三层结构、11 个 skills、5 条红线、CI 结构检查（`eval-gate.yml`）就绪
-- ✅ L2/L3/L4 用例集已落盘：路由用例 20 条（`evals/cases/routing.md`）、陷阱用例 6 条（`evals/cases/behavior.md`）、端到端任务卡 6 张 + 五维 RUBRIC（`evals/golden-tasks/`）
+- ✅ L1 结构完整：三层结构、12 个 skills、5 条红线、CI 结构检查（`eval-gate.yml`）就绪
+- ✅ L2/L3/L4 用例集已落盘：路由用例 21 条（`evals/cases/routing.md`）、陷阱用例 6 条（`evals/cases/behavior.md`）、端到端任务卡 6 张 + 五维 RUBRIC（`evals/golden-tasks/`）
 - ✅ 运行手册就绪：日常评测（`evals/README.md`）+ 干净基线（`evals/run-baseline.md`，judge 隔离防自评污染）
 - ❌ 待办：① 跑首份基线评测报告（没有基线就没有进化曲线；须按 `evals/run-baseline.md` 在干净上下文执行）② L5 实战验证需积累真实人审打回率数据 ③ 红线示例需按项目实例化
 

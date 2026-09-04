@@ -37,6 +37,8 @@ version: 1.1.0
     - 若需要，按任务类型产出：
         - UI 类 → 页面规格书（page-spec，含布局 / 交互 / 视觉）
         - 非 UI / 架构类 → 架构图 / 接口契约 / 时序图
+    - 需「可点击交互 HTML」原型时（需求对齐、多方案演示），**转交给独立 UX 角色 `ux-prototype-designer` 产出**（角色职责与质检见其 SKILL / `references/ux-review-checklist.md`），并叠加项目层原型稿 scaffold（如 web_system `docs/ui/prototype-scaffold.html`）。本环节不直接产出 UI 类可点击原型（那是设计角色职责，不是编码角色的前置代劳）。
+    - 原型稿的目标端（桌面 Web / 移动 H5 / App / 小程序 / 定制落地页）由 UX 角色在工作流起始确认：已明确则回显，未明确则给建议并列待用户拍板。此处不重复定义形态细节（见 ux-prototype-designer `references/prototype-common.md` §三）。
     - 判定结果与产出状态写入 TODO 列表（如 `原型稿: 需要(已确认) / 不需要`），供 rd-execute 入口校验。
   ↓
 【等待用户确认 TODO 列表 + 原型稿判定】

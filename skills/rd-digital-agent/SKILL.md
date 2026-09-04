@@ -23,6 +23,10 @@ version: 4.1.0
   │                                         ↓
   │                                      .skills/rd-execute → rd-review
   │
+  ├─ "做个原型" / 交互怎么设计 / 先看形态 → .skills/ux-prototype-designer
+  │                                         ↓ 产出原型稿 → 过独立交互质检 → 人确认
+  │                                      .skills/rd-plan（回填 page-spec）→ rd-execute → rd-review
+  │
   ├─ 报错 / 测试失败 / 意外行为 ───────→ .skills/systematic-debugging
   │                                         ↓ 根因修复后
   │                                      .skills/verification-before-completion
@@ -52,6 +56,7 @@ version: 4.1.0
 | 流水线 | `rd-plan` | 细化为任务列表 |
 | 流水线 | `rd-execute` | 逐项实现（TDD 迭代-校验） |
 | 流水线 | `rd-review` | 自检产物质量 |
+| 设计 | `ux-prototype-designer` | 需求/方案 → 可点击交互 HTML 原型稿；独立交互质检（`ux-review-checklist.md`） |
 | 质量门 | `verification-before-completion` | 完成前强制验证（一切交付的收尾门） |
 | 调试 | `systematic-debugging` | 四阶段根因分析，禁止报错即改 |
 | 重构 | `incremental-refactoring` | 测试保护下小步重构 |
@@ -62,13 +67,15 @@ version: 4.1.0
 
 ## 评审链（方案质量门）
 
-产物从需求到实现依次过三道评审，按复杂度分级触发：
+产物从需求到实现依次过评审，按复杂度分级触发。**涉及可点击原型稿/UI 交互的方案**，产品评审后、技术评审前先过 UX 交互质检：
 
 1. **产品方案评审**（做不做对的事）—— 需求/产品方案
    → `references/product-review-checklist.md`（AI 自查）→ 人在「设计确认」复核
-2. **技术方案评审**（怎么实现）—— design.md / 选型 / 架构
+2. **UX 交互质检**（交互设计合不合格）—— 原型稿 / 交互方案
+   → `ux-prototype-designer` 产出原型稿时过 `skills/ux-prototype-designer/references/ux-review-checklist.md`（信息架构 / 任务流 / 状态矩阵 / 可用性）；与产品价值确认相互独立，互不替代
+3. **技术方案评审**（怎么实现）—— design.md / 选型 / 架构
    → `tech-review/references/review-checklist.md`（AI 自查，配合 tech-review 技能）
-3. **代码评审**（实现好不好）—— 执行完成后 → `rd-review`
+4. **代码评审**（实现好不好）—— 执行完成后 → `rd-review`
 
 底层思考工具：`rd-plan/references/thinking-checklist.md`（苏格拉底辨证 / 第一性原理 / 芒格）——评审前自问、评审时复核答案质量。
 分级：日常小改动只跑 thinking-checklist 简化档；中大型 / 跨模块方案走完整评审链。
@@ -82,16 +89,16 @@ version: 4.1.0
 |------|------|------------------|--------------|
 | 计划（TODO 列表） | 每次 | — | 人 |
 | 方案（design / 选型 / 接口契约） | 每次 | — | 人 |
-| 原型稿（UI 规格 或 架构原型） | **按需** | **人**（rd-plan 末尾拍板） | 人 |
+| 原型稿（可点击 HTML 原型 或 架构原型） | **按需** | **人**（rd-plan 末尾拍板） | 人（原型稿另须过 `ux-prototype-designer` 独立交互质检后再交人） |
 
 门禁逻辑（`rd-execute` 入口硬校验）：
 - 计划 ✓ 且 方案 ✓
-- 且（若判定「需要原型稿」 → 原型稿 ✓ 且人已确认）
+- 且（若判定「需要原型稿」 → 原型稿 ✓ 且人已确认，且原型稿已过交互质检）
 - 否则**禁止进入实现**，强制回退到对应产出环节补齐。
 
 要点：
 - **原型稿的「是否产出」由人决策**（rd-plan 阶段末尾显式询问/确认），AI 仅给建议：UI 大改 / 新功能 / 跨模块 → 建议产出；小改动 / 简单 CRUD → 可省。
-- 一旦人判定需要，原型稿内容仍须**人确认**后才进 execute。
+- 一旦人判定需要，**原型稿由 `ux-prototype-designer` 角色产出**（非前端开发直接代劳），产出后先过该角色的独立交互质检，再交**人确认**后才进 execute。
 - 确认权始终在人；AI 无权替自己确认任何一件。
 
 ## 多 Agent 协作团队模式（Context 隔离）
