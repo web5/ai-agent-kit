@@ -26,15 +26,27 @@
 
 中大型方案的设计确认走评审链，AI 自查后人在此复核：
 产品方案评审（做不做对的事）→ 技术方案评审（怎么实现）→ 实现后代码评审（rd-review）。
-清单：`rd-digital-agent/references/product-review-checklist.md`、`tech-review/references/review-checklist.md`。
-小改动走简化档（thinking-checklist 3 问），不走全链。
+涉及可点击原型稿/交互设计的方案，产品评审后先过 UX 交互质检（`ux-prototype-designer` 独立质检清单，与产品确认互不替代）。
+清单：`rd-digital-agent/references/product-review-checklist.md`、`skills/ux-prototype-designer/references/ux-review-checklist.md`、`tech-review/references/review-checklist.md`。
+小改动走简化档（`thinking-checklist` 简化档 · 最小交付卡），不走全链。
+
+## 开工前置 · 不分级不变量（交付物 + 验证判据）
+
+每个任务动手前先定两件套并回读用户（最小意图确认）。这两项**任何任务不可缺省**——分级只压缩过程仪式（评审链 / spec 文档体量 / 辨证问数），不压缩它们：
+
+- **交付物定义**：做成 = 一句话可验证；不算做成 = 边界/反例；改动点/产物清单可机器核对。
+- **验证判据先行**：先写「怎么证明做成」再动手——代码：明确/先写测试（TDD RED）；文档：对照 spec/大纲的核点；探索/发散：收敛判据 + 质量评分点。
+
+具体必答行见 `skills/rd-plan/references/thinking-checklist.md` 简化档 · 最小交付卡；与 Anthropic「任务开工前先给验收判据」对齐的逐层落点见 `references/anthropic-workflow-mapping.md`。完成时按先行判据逐条给验证证据（`verification-before-completion`），禁止「应该没问题」替代。
 
 ## 红线
 
-- 版本化产物必须落盘，不只在对话中。
-- 反复出现的错误以机器检查保障，不只写文本。
-- 变更模型或规则后具备回归手段。
-- 兜底实现须先做第一性判断：不从"保证任务完整性"出发预设兜底策略；没有业务定义的路径一律走明确错误/提醒，不自行发明降级行为。
+> 红线共 **5 条（机器化）**，完整定义见 `rules/general/` 01–05（循环工作流 / 人审节点 / 版本化产物链 / 子任务隔离 / 红线机器化）。以下为本数字人常驻视角的关键要点摘要，均落入上述 5 条、非独立计数。
+
+- 版本化产物必须落盘，不只在对话中（对应 03）。
+- 反复出现的错误以机器检查保障，不只写文本（对应 05）。
+- 变更模型或规则后具备回归手段（落入 eval-gate / 05）。
+- 兜底实现须先做第一性判断：不从"保证任务完整性"出发预设兜底策略；没有业务定义的路径一律走明确错误/提醒，不自行发明降级行为（落入 05）。
 
 ## 加载方式
 

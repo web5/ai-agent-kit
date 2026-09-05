@@ -32,7 +32,7 @@ jobs:
           for d in skills/*/; do
             s=$(basename "$d")
             case "$s" in
-              rd-digital-agent|rd-brainstorm|rd-plan|rd-execute|rd-review|systematic-debugging|incremental-refactoring|code-explore|tech-review|verification-before-completion|user-memory) ;;
+              rd-digital-agent|rd-brainstorm|rd-plan|rd-execute|rd-review|ux-prototype-designer|systematic-debugging|incremental-refactoring|code-explore|tech-review|verification-before-completion|user-memory) ;;
               *) echo "::error::孤儿 skill：$s 未被任何决策树/用例引用"; fail=1 ;;
             esac
           done
@@ -47,8 +47,8 @@ jobs:
           if grep -rn '<your-team>\|<your-project>' rules/ references/ AGENT.md 2>/dev/null; then
             echo "::error::发现占位符残留（rules/references/AGENT.md 不允许占位符）"; fail=1
           fi
-          # S5 路由指向的 skill 存在（决策树引用的 9 个子技能）
-          for s in rd-brainstorm rd-plan rd-execute rd-review systematic-debugging incremental-refactoring code-explore tech-review verification-before-completion; do
+          # S5 路由指向的 skill 存在（决策树引用的子技能）
+          for s in rd-brainstorm rd-plan rd-execute rd-review ux-prototype-designer systematic-debugging incremental-refactoring code-explore tech-review verification-before-completion; do
             [ -f "skills/$s/SKILL.md" ] || { echo "::error::决策树引用 skills/$s 但文件不存在"; fail=1; }
           done
           # S6 红线与执行手段绑定：AGENT.md 红线条目须在技能检查清单中有对应执行项（防「只有口号、无执行」退化）

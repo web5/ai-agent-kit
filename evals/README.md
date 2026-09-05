@@ -12,7 +12,7 @@
 | 层 | 对象 | 手段 | 成本 |
 |----|------|------|------|
 | **L1 结构完整性** | 文件齐全、无孤儿 skill、frontmatter、占位残留、路由指向存在 | 静态脚本 + CI（`eval-gate.yml`，用例化见 `cases/structure.md`） | 近零 |
-| **L2 路由准确率** | Hub 是否分派到正确 skill | `cases/routing.md`（20 条，二元判定） | 低 |
+| **L2 路由准确率** | Hub 是否分派到正确 skill | `cases/routing.md`（21 条，二元判定） | 低 |
 | **L3 行为遵循度** | 红线是否被静默违反 | `cases/behavior.md`（6 条陷阱） + rubric | 中 |
 | **L4 端到端质量** | 完整产物链的产出质量与成本 | `golden-tasks/`（T1~T6 + RUBRIC） + 产物清单核对 | 高 |
 | **L5 实战验证** | 真实世界是否变好 | 真实项目人审打回率、红线拦截次数、复盘回灌记录 | 极高 |
@@ -26,7 +26,7 @@ evals/
 ├── README.md                 # 本文件：怎么跑
 ├── cases/
 │   ├── structure.md          # L1 静态结构检查清单（机器检查的用例化）
-│   ├── routing.md            # L2 路由用例（20 条，二元判定）
+│   ├── routing.md            # L2 路由用例（21 条，二元判定）
 │   └── behavior.md           # L3 陷阱用例（6 条，测红线静默违反）
 ├── golden-tasks/
 │   ├── README.md             # 任务卡说明与使用规则
