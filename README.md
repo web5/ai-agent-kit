@@ -12,14 +12,16 @@ ai-agent-kit/
 ├── README.md                   # 本文件
 ├── skills/                     # 工作流引擎（数字人的「怎么干」）
 │   ├── rd-digital-agent/       #   Hub：按复杂度分派到下列子技能
+│   ├── requirement-translation/ #  需求转换（模糊意图→可验证需求 spec，下游质疑锚点）
 │   ├── rd-brainstorm/          #   探索方案选项
 │   ├── rd-plan/                #   细化为任务列表
 │   ├── rd-execute/             #   逐项实现（迭代-校验）
-│   ├── rd-review/              #   自检产物质量
+│   ├── rd-review/              #   实现者自查产物质量
 │   ├── ux-prototype-designer/  #   UX 原型交互设计师（需求→可点击交互 HTML 原型稿 + 独立交互质检）
+│   ├── test-verification/      #   测试验证（独立第三方盲测，对开发/需求质疑）
 │   ├── tech-review/            #   方案/结构/数据/安全审查
 │   ├── systematic-debugging/   #   系统化调试（四阶段根因分析）
-│   ├── verification-before-completion/  # 完成前强制验证门
+│   ├── verification-before-completion/  # 完成前强制验证门（开发者自证，与 test-verification 互补）
 │   ├── code-explore/           #   代码库探索（索引优先/影响面分析）
 │   ├── incremental-refactoring/  # 测试保护下的增量重构
 │   └── user-memory/            #   用户偏好与项目上下文记忆

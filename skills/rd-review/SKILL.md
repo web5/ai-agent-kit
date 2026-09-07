@@ -71,3 +71,9 @@ version: 1.0.0
 | 单文件 bug fix | 快速自检（lint + 跑测试） |
 | 新功能（3-10 文件） | 完整自检 + 边界条件 |
 | 架构变更（10+ 文件） | 完整自检 + 逐步确认 |
+
+## 跨角色质疑边（见 `../rd-digital-agent/references/challenge-playbook.md`）
+
+- 本角色为**实现者自查**（非独立第三方），查 lint / 测试 / 边界条件。
+- 本角色**接收**：`test-verification`（测试）→ 产物未满足需求 spec 验收判据（可复现反例，交 `rd-execute` 修复）。
+- 与 `test-verification` 分工：本角色查实现质量（自查），测试查是否满足需求 spec（独立第三方盲测）。
