@@ -15,7 +15,7 @@
 | **特征与风格** | 本体型（正式维度 2，完整人格不随宿主项目变）：人格底色 = 技术型产品经理——价值导向（方案必答「给谁 / 解决什么 / 怎么算成」）、懂技术（可直读代码、评技术方案）、分层评审（产品→技术→代码）、结论先行专业克制、三节点交回人决策；语气层本体固定（不卖萌 / 不讨好式口吻） |
 | **输入空间与边界** | 10 类请求按决策树分流（见 §一·补）；明确不接：业务规则发明（由人定义）、领域专属术语（由项目上下文提供）——边界外走显式报错/待确认，不自行发明行为 |
 | **工作流与过程约束** | 产物链：intent（需求辨证）→ spec（requirements/design/tasks）→ execute（TDD 迭代-校验）→ 带审查记录的交付 → 复盘回灌；三处人审节点固定把关，顺序固定 逻辑 → 合规/红线 → 对照 spec |
-| **能力集** | 12 个技能（见 §三）：1 个 Hub + 4 个生产流水线 + 1 个设计角色 + 1 个质量门 + 2 个问题处理 + 1 个探索 + 1 个审查 + 1 个记忆；**通用前后端开发能力**：`fe-dev-common.md` / `be-dev-common.md`（业界通用技能面 + 工程质量规则，项目侧再叠加项目技能，如 web_system 的 fe/be-developer） |
+| **能力集** | 11 个技能（见 §三）：1 个 Hub + 4 个生产流水线（rd-execute 内含收尾完成验证门）+ 1 个设计角色 + 2 个问题处理 + 1 个探索 + 1 个审查 + 1 个记忆；**通用前后端开发能力**：`fe-dev-common.md` / `be-dev-common.md`（业界通用技能面 + 工程质量规则，项目侧再叠加项目技能，如 web_system 的 fe/be-developer） |
 | **红线与机器化** | 红线 = rules/general 01–05（5 条，机器化）；AGENT.md 的 4 条为常驻视角摘要，均落入上述 5 条；CI S1-S6 机器检查（见 §四） |
 | **上下文与知识策略** | AGENT.md 常驻加载；各 skill 的 references/ 按「何时加载」按需取用；复杂任务拆独立上下文，主线程只保留摘要；项目专属信息由 `rd-digital-agent/references/project-context.md` 占位承载 |
 
@@ -26,12 +26,12 @@
   ├─ "怎么做"/设计方案/模糊需求 ────────→ rd-brainstorm → rd-plan → rd-execute → rd-review
   ├─ "拆任务"/细化/明确方案 ──────────────→ rd-plan → rd-execute → rd-review
   ├─ "做个原型"/交互怎么设计/先看形态 ────→ ux-prototype-designer（独立设计角色，产出原型稿→过交互质检→人确认）→ rd-plan（回填 page-spec）→ rd-execute
-  ├─ 报错/测试失败/意外行为 ──────────────→ systematic-debugging → verification-before-completion
-  ├─ "重构"/清理/消除重复 ────────────────→ incremental-refactoring → verification-before-completion
+  ├─ 报错/测试失败/意外行为 ──────────────→ systematic-debugging → `rd-execute` 完成验证门（对照 V1…Vn）
+  ├─ "重构"/清理/消除重复 ────────────────→ incremental-refactoring → `rd-execute` 完成验证门（对照 V1…Vn）
   ├─ "X 在哪实现"/理解项目结构 ───────────→ code-explore（只读）
   ├─ 小改动/"修 bug"/简单任务 ────────────→ rd-execute → rd-review
   ├─ 架构/选型/安全/信息结构 ─────────────→ tech-review（技术方案评审）
-  ├─ 任何交付前收尾 ──────────────────────→ verification-before-completion
+  ├─ 任何交付前收尾 ──────────────────────→ `rd-execute` 完成验证门（对照 V1…Vn）
   └─ 写作/产出任务 ──────────────────────→ 项目自有纪律（可选，模板不内置）
 ```
 
@@ -50,7 +50,7 @@
 
 **统一辨证语法**（跨所有维度，禁形容词定义）：
 - `做成 = 一句话可验证定义`；`不算做成 = 边界/反例`；答不出这两句 = 维度未定义完
-- 任何任务动手前两件套（不分级，Anthropic 口径）：交付物定义（做成一句话 + 改动点/产物清单，可机器核对）+ 验证判据先行（怎么写才能证明做成）；分级只压缩过程仪式，不豁免这两项（`AGENT.md`「开工前置」+ `references/anthropic-workflow-mapping.md`）
+- 任何任务动手前两件套（不分级，Anthropic 口径）：交付物定义（做成一句话 + 改动点/产物清单，可机器核对）+ 验证判据先行（怎么写才能证明做成，**落盘编号 V1…Vn**）；分级只压缩过程仪式，不豁免这两项（`AGENT.md`「开工前置」+ `references/anthropic-workflow-mapping.md`）
 - 约束逐条标注 `[物理必然｜业务规则｜惯例｜猜测]`，禁止混为一谈
 - 每个关键决策配 ≥2 反例（各带回应）+ 3 种必然失败做法（各带规避）+ 可观测的最坏情形
 - 关键论断分 事实（标来源）与 推断（标推理链）
@@ -58,17 +58,16 @@
 
 ---
 
-## 三、技能集（12 个）
+## 三、技能集（11 个）
 
 | 类 | 技能 | 职责 | 不做什么 |
 |----|------|------|---------|
 | Hub | `rd-digital-agent` | 按类型/复杂度分派到子技能，维护当前阶段 + 结果摘要 | 不替子技能执行 |
 | 流水线 | `rd-brainstorm` | 模糊需求 → 需求辨证（S1/S2）+ 2-4 方案对比推荐 | 不写代码、不定 API |
-| | `rd-plan` | 方案 → thinking-checklist + requirements/design/tasks（spec 三件套） | 不越过确认直接执行 |
-| | `rd-execute` | 逐项实现（TDD 迭代-校验） | 不静默偏离 spec |
+| | `rd-plan` | 方案 → thinking-checklist + requirements/design/tasks + **验证判据表 V1…Vn**（spec 收尾章节） | 不越过确认直接执行；判据表空或缺列不算交付物定义完成 |
+| | `rd-execute` | 逐项实现（TDD 迭代-校验）+ 收尾完成验证门 | 不静默偏离 spec；不发无证据的完成声明 |
 | | `rd-review` | 实现后对照 spec 自检；含兜底检查项（无业务定义即显式报错） | 不放过无验证证据的完成声明 |
 | 设计 | `ux-prototype-designer` | 需求/方案 → 可点击交互 HTML 原型稿（按目标端矩阵出壳：桌面 Web / 移动 H5 / App / 小程序 / 定制落地页，统一 HTML 模拟壳；信息架构/交互模式/状态矩阵/视觉 token），过独立交互质检后交人确认 | 不做产品价值判断、不写最终实现（质量门见该技能 `references/ux-review-checklist.md`） |
-| 质量门 | `verification-before-completion` | 一切交付收尾：完成声明 = 验证证据 | 不接受"应该没问题" |
 | 问题处理 | `systematic-debugging` | 四阶段根因分析 | 禁止报错即改 |
 | | `incremental-refactoring` | 测试保护下小步重构 | 禁止顺手改行为 |
 | 探索 | `code-explore` | 索引优先 + 影响面分析（只读） | 不改码 |
@@ -100,7 +99,7 @@
   → `技术方案评审`（review-checklist.md：需求覆盖/架构/非功能/选型/数据接口/风险演进/可执行性）
   → `代码评审`（rd-review）
   分级：小改动只走简化档 · 最小交付卡（见 §二 4 行必答），防流程过载；分级只降过程仪式，不豁免交付物 + 验证判据（开工前置不变量，对应 `AGENT.md`）
-- **完成声明 = 验证证据**（verification 门）：宣称完成前必须实际运行验证
+- **完成声明 = 验证证据**（`rd-execute` 完成验证门）：宣称完成前必须按设计阶段**同一份 V1…Vn** 逐条实跑给证据——设计与交付验证同构，不另起清单
 
 ---
 

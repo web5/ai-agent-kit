@@ -15,13 +15,12 @@ ai-agent-kit/
 │   ├── requirement-translation/ #  需求转换（模糊意图→可验证需求 spec，下游质疑锚点）
 │   ├── rd-brainstorm/          #   探索方案选项
 │   ├── rd-plan/                #   细化为任务列表
-│   ├── rd-execute/             #   逐项实现（迭代-校验）
+│   ├── rd-execute/             #   逐项实现（迭代-校验）+ 收尾完成验证门（完成声明 = 验证证据）
 │   ├── rd-review/              #   实现者自查产物质量
 │   ├── ux-prototype-designer/  #   UX 原型交互设计师（需求→可点击交互 HTML 原型稿 + 独立交互质检）
 │   ├── test-verification/      #   测试验证（独立第三方盲测，对开发/需求质疑）
 │   ├── tech-review/            #   方案/结构/数据/安全审查
 │   ├── systematic-debugging/   #   系统化调试（四阶段根因分析）
-│   ├── verification-before-completion/  # 完成前强制验证门（开发者自证，与 test-verification 互补）
 │   ├── code-explore/           #   代码库探索（索引优先/影响面分析）
 │   ├── incremental-refactoring/  # 测试保护下的增量重构
 │   └── user-memory/            #   用户偏好与项目上下文记忆
@@ -52,7 +51,9 @@ ai-agent-kit/
 │   ├── sync-to-target.sh       # 同步到其他仓库的脚本（目标可配置）
 │   ├── run-eval.sh             # 测评编排（AGENT_CMD 参数化，需被测 agent 无头调用）
 │   ├── check-artifacts.sh      # 产物落盘核对（D1 机器可判定）
-│   └── gen-report.sh           # 评测报告骨架生成
+│   ├── gen-report.sh           # 评测报告骨架生成
+│   ├── uninstall-superpowers.sh #  卸载全局 Superpowers 工作流 skill（可回滚）
+│   └── restore-superpowers.sh   #  卸载回滚（按备份清单恢复 symlink）
 └── .github/workflows/
     ├── sync-to-target.yml      # 推送 master 时自动开 PR 到目标仓库
     └── eval-gate.yml           # PR 门禁：结构检查 + 改 kit 必须附评测报告
@@ -68,6 +69,7 @@ ai-agent-kit/
 - **人审节点**：意图 / 大纲 / 交付前，三处把关。
 - **验证优先**：完成声明 = 验证证据，禁止「应该没问题」。
 - **开工前置（不分级）**：任何任务动手前先定交付物定义与验证判据，验收判据先行、完成后逐条对照证据（详见「方法来源」节）。
+- **设计与交付验证同构**：判据落盘为编号的「验证判据表 V1…Vn」（判据 / 验证手段 / PASS 条件 / 不通过怎么办），设计时写在 spec 收尾，交付时由 `rd-execute` 完成验证门按同一编号逐条给证据——全程只有这一份清单。
 
 ## 方法来源 · Anthropic 工作方法论引用
 
@@ -79,8 +81,10 @@ ai-agent-kit/
 |---|---|---|
 | 每个任务开工前明确交付物与验收判据 | 做成定义 + 交付物清单 + 验证判据（**开工前置 · 不分级**） | `AGENT.md`「开工前置」；`skills/rd-plan/references/thinking-checklist.md` 简化档 · 最小交付卡 |
 | 测试用例写进任务再动手 | TDD RED（先写失败测试）→ GREEN | `skills/rd-execute/SKILL.md` |
-| 展示证据而非口头宣称成功 | 完成声明 = 验证证据 | `skills/verification-before-completion/SKILL.md` |
-| spec 以端到端验证步骤收尾 | EARS 验收标准入 `requirements.md`；评测任务卡 = 固定输入 + 期望产物 + 评分点 | `skills/rd-plan/SKILL.md`；`digital-agent-eval/golden-tasks/` |
+| 展示证据而非口头宣称成功 | 完成声明 = 验证证据（按同一份 V1…Vn 逐条给证据） | `skills/rd-execute/SKILL.md` §完成验证门 |
+| spec 以端到端验证步骤收尾 | **验证判据表 V1…Vn** 作为 spec / 计划的收尾章节 + EARS 验收标准入 `requirements.md`；评测任务卡 = 固定输入 + 期望产物 + 评分点 | `skills/rd-plan/SKILL.md` §验证判据表；`digital-agent-eval/golden-tasks/` |
+
+**唯一方法论来源**：本 kit 的工作方式只采用上表这一套（`rd-*` 流水线 + 完成验证门）。宿主环境若同时装了 Superpowers 等第二套工作流 skill（`brainstorming` / `writing-plans` / `executing-plans` 等），**一律不启用**——其计划模板无「交付物定义 + 验证判据先行」，走它会绕过验证链，表现为"执行时看不到交付验证"。同域/同名冲突一律以本 kit 的 `rd-*` 为准。
 
 逐层落点审计（每条主张对应到文件与行、含已知缺口）见 [`references/anthropic-workflow-mapping.md`](references/anthropic-workflow-mapping.md)。
 
@@ -132,7 +136,7 @@ ai-agent-kit/
 
 按融合后的 L1~L5 标尺自评：
 
-- ✅ L1 结构完整：三层结构、12 个 skills、5 条红线、CI 结构检查（`eval-gate.yml`）就绪
+- ✅ L1 结构完整：三层结构、11 个 skills、5 条红线、CI 结构检查（`eval-gate.yml`）就绪
 - ✅ L2/L3/L4 用例集已落盘：路由用例 21 条（`evals/cases/routing.md`）、陷阱用例 6 条（`evals/cases/behavior.md`）、端到端任务卡 6 张 + 五维 RUBRIC（`evals/golden-tasks/`）
 - ✅ 运行手册就绪：日常评测（`evals/README.md`）+ 干净基线（`evals/run-baseline.md`，judge 隔离防自评污染）
 - ❌ 待办：① 跑首份基线评测报告（没有基线就没有进化曲线；须按 `evals/run-baseline.md` 在干净上下文执行）② L5 实战验证需积累真实人审打回率数据 ③ 红线示例需按项目实例化

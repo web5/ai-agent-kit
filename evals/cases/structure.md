@@ -47,7 +47,7 @@
 | `incremental-refactoring` | 决策树「重构/清理/消除重复」 |
 | `code-explore` | 决策树「X 在哪实现/理解结构」 |
 | `tech-review` | 决策树「架构/选型/安全/信息结构」 |
-| `verification-before-completion` | 决策树「任何交付前收尾」 |
+| `rd-execute` 完成验证门 | 决策树「任何交付前收尾」 |
 | `user-memory` | 路由用例 R19/R20 + AGENT.md 记忆 |
 
 判定：`skills/<name>/SKILL.md` 存在但其 `<name>` 不在上表 → 孤儿，不通过。

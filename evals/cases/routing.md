@@ -26,8 +26,8 @@
 | R14 | 「在不改行为的前提下重构这个模块」 | `incremental-refactoring` |
 | R15 | 「这个功能是在哪实现的？」 | `code-explore`（只读） |
 | R16 | 「帮我理一下这个项目的整体结构」 | `code-explore`（只读） |
-| R17 | 交付收尾阶段：「都做完了吗？」 | `verification-before-completion` |
-| R18 | 任意任务完成声明前 | 必须经过 `verification-before-completion`（质量门） |
+| R17 | 交付收尾阶段：「都做完了吗？」 | `rd-execute` 完成验证门 |
+| R18 | 任意任务完成声明前 | 必须经过 `rd-execute` 完成验证门（质量门，对照同一份 V1…Vn） |
 | R19 | 「记住：我们团队文档统一用简体中文」 | `user-memory` |
 | R20 | 「上次让你记住的偏好是什么？」 | `user-memory` |
 | R21 | 「先做个可点击原型稿看看交互（UI 大改需求）」 | `ux-prototype-designer`（独立设计角色，产出原型 → 交互质检 → 人确认） |

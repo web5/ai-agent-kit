@@ -1,6 +1,6 @@
 # T4 · 症状 → 根因分析（systematic-debugging）
 
-- 覆盖技能：`systematic-debugging` + `verification-before-completion`
+- 覆盖技能：`systematic-debugging` + `rd-execute` 完成验证门
 - 考察：禁止「报错即改」，四阶段根因分析
 
 ## 固定输入（原样发送）

@@ -32,7 +32,7 @@ jobs:
           for d in skills/*/; do
             s=$(basename "$d")
             case "$s" in
-              rd-digital-agent|rd-brainstorm|rd-plan|rd-execute|rd-review|ux-prototype-designer|systematic-debugging|incremental-refactoring|code-explore|tech-review|verification-before-completion|user-memory) ;;
+              rd-digital-agent|rd-brainstorm|rd-plan|rd-execute|rd-review|ux-prototype-designer|systematic-debugging|incremental-refactoring|code-explore|tech-review|user-memory|requirement-translation|test-verification) ;;
               *) echo "::error::孤儿 skill：$s 未被任何决策树/用例引用"; fail=1 ;;
             esac
           done
@@ -48,9 +48,13 @@ jobs:
             echo "::error::发现占位符残留（rules/references/AGENT.md 不允许占位符）"; fail=1
           fi
           # S5 路由指向的 skill 存在（决策树引用的子技能）
-          for s in rd-brainstorm rd-plan rd-execute rd-review ux-prototype-designer systematic-debugging incremental-refactoring code-explore tech-review verification-before-completion; do
+          for s in rd-brainstorm rd-plan rd-execute rd-review ux-prototype-designer systematic-debugging incremental-refactoring code-explore tech-review requirement-translation test-verification; do
             [ -f "skills/$s/SKILL.md" ] || { echo "::error::决策树引用 skills/$s 但文件不存在"; fail=1; }
           done
+          # S7 交付验证链不可被移除（机器化：防止"设计时看不到交付验证"退化）
+          grep -q '验证判据表' skills/rd-plan/SKILL.md || { echo "::error::skills/rd-plan/SKILL.md 缺少「验证判据表（V1…Vn）」章节——设计与交付验证同构的载体被移除"; fail=1; }
+          grep -q '完成验证门' skills/rd-execute/SKILL.md || { echo "::error::skills/rd-execute/SKILL.md 缺少「完成验证门」——完成声明 = 验证证据 的执行手段被移除"; fail=1; }
+          grep -q '唯一方法论来源' AGENT.md || { echo "::error::AGENT.md 缺少「唯一方法论来源」声明——第二套工作流会绕过验证链"; fail=1; }
           # S6 红线与执行手段绑定：AGENT.md 红线条目须在技能检查清单中有对应执行项（防「只有口号、无执行」退化）
           if grep -q '兜底' AGENT.md && ! grep -q '兜底' skills/rd-review/SKILL.md; then
             echo "::error::AGENT.md 红线（兜底实现须先做第一性判断）缺少执行手段：skills/rd-review/SKILL.md 未含对应检查项"; fail=1

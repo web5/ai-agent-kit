@@ -1,6 +1,6 @@
 # 盲测装载包（Blind-Test Playbook）
 
-> 独立第三方验证的共享装载模板，由测试验证角色引用。定义"盲测"的统一规则，与 `verification-before-completion`（开发者自证）区分。
+> 独立第三方验证的共享装载模板，由测试验证角色引用。定义"盲测"的统一规则，与开发者自证（`rd-execute` 完成验证门）区分。
 > 引用路径（跨 skill）：`../rd-digital-agent/references/blind-test-playbook.md`
 
 ## 盲测原则（独立性来源）
@@ -23,5 +23,5 @@
 ## 禁止
 
 - 不读实现思路（保持盲测独立，否则退化为开发者自证）。
-- 不以"应该没问题"替代反例证据（呼应 `verification-before-completion` 红线）。
+- 不以"应该没问题"替代反例证据（呼应完成验证门红线）。
 - 不直接改产物：只验证 + 报告，修复交 `rd-execute`。
