@@ -46,6 +46,10 @@ sync_one() {
       || { echo "::error::克隆失败（仓库不存在或 SYNC_TOKEN 无权限）：${repo}" >&2; exit 1; }
     cd "$clone_dir" \
       || { echo "::error::进入克隆目录失败：${repo}" >&2; exit 1; }
+    # CI runner 没有全局 git 身份，不设则提交直接失败：fatal: empty ident name。
+    # 只写进本次克隆的本地配置，不污染使用者的全局配置。
+    git config user.name "ai-agent-kit-sync-bot"
+    git config user.email "ai-agent-kit-sync-bot@users.noreply.github.com"
     git checkout --quiet "$base" \
       || { echo "::error::目标仓库无分支 ${base}：${repo}" >&2; exit 1; }
     git checkout --quiet -B "$PR_BRANCH" \
