@@ -11,8 +11,8 @@
 
 ## 期望产物（文件系统核对）
 
-- [ ] `announcement.md`：成稿，四节齐全
-- [ ] `review-record.md`（或成稿内嵌审查记录）：自检结果（对照 spec 逐项）
+- [ ] `announcement.md|draft-v2.md|draft-v1.md`：成稿，四节齐全
+- [ ] `review-record.md|verification.md|review.md`：自检结果（对照 spec 逐项）
 
 ## 质量评分点（喂给 judge）
 

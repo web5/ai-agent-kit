@@ -50,11 +50,29 @@
 - 变更模型或规则后具备回归手段（落入 eval-gate / 05）。
 - 兜底实现须先做第一性判断：不从"保证任务完整性"出发预设兜底策略；没有业务定义的路径一律走明确错误/提醒，不自行发明降级行为（落入 05）。
 
-## 唯一方法论来源
+## 方法论的三个组成部分（一条主干 + 两层纪律）
 
-工作方式唯一来源 = **Anthropic AI native 方法论**，本地化为「`rd-*` 流水线 + 完成验证门 + 验证判据表 V1…Vn 贯穿设计与交付」。
+> 与上方「三层结构」不同维度：「三层结构」是**规则体系**（指南 / 技能 / 红线）；本节是**方法论组成**。
 
-宿主环境若同时装有第二套工作流 skill（如 Superpowers 系列的 `brainstorming` / `writing-plans` / `executing-plans` 等），**一律不启用**：其计划模板不含「交付物定义 + 验证判据先行」，走它会绕过本 Kit 的验证链，导致"设计时看不到交付验证"。同域或同名冲突一律以本 Kit 的 `rd-*` 为准，不以"环境里正好有"为选用理由。
+一套 AI Native 方法论由三部分组成，**不是三套方案三选一**：
+
+| 组成 | 来源 | 作用域 | 实体 |
+|---|---|---|---|
+| `L1-karpathy` 行为准则 | Karpathy | 每次代码产出怎么写（简洁 / 精准 / 可验证） | `kits/L1-karpathy/SKILL.md` |
+| `L2-superpowers` 执行手段库 | Superpowers | 单个工程动作怎么做（TDD / 调试 / 验证 / 并行分派） | `kits/L2-superpowers/SKILL.md` |
+| `L3-anthropic` 协作主干 | Anthropic | 整个任务怎么组织（阶段 / 判据 / 人审） | `skills/rd-digital-agent`（本文件主体） |
+
+结构：`协作主干决定阶段与判据 → 调用执行手段库完成每一步 → 所有代码产出受行为准则约束`。判据的**定义**归主干、**执行**归手段库、**可验证性**归行为准则。设计论证与来源映射见 `references/three-kits-architecture.md`。
+
+## 唯一方法论来源（编排权唯一）
+
+工作方式唯一来源 = **Anthropic AI native 方法论**，本地化为「`rd-*` 流水线 + 完成验证门 + 验证判据表 V1…Vn 贯穿设计与交付」，并由 `L1-karpathy` 行为准则与 `L2-superpowers` 执行手段库补齐（见上一节）。三者是一套方法论的组成部分。
+
+**唯一的是编排权，不是「只许有一种方法论」**：
+
+- `rd-*` 是唯一编排入口：任务怎么分阶段由它决定。宿主环境若存在同域/同名的第二套编排技能（如 `brainstorming` / `writing-plans` / `executing-plans` / `spec-driven-development`），**同域同名冲突以本 Kit 的 `rd-*` 为准**，不以"环境里正好有"为选用理由。
+- `L2`（TDD / 调试 / 验证 / 并行分派 / worktree / 评审）与 `L1`（行为准则）由主干调用，属本套方法论组成部分，**不得禁用**。
+- 宿主存在第二套编排技能时的处理优先级：① 补齐其模板的「交付物定义 + 验证判据」字段使其与主链同构（首选）→ ② 同域同名以 `rd-*` 为准 → ③ 整体卸载（最后手段，代价见 `references/three-kits-architecture.md` §三 R1）。
 
 ## 加载方式
 
@@ -62,6 +80,7 @@
 - `AGENT.md` → 常驻系统提示
 - `skills/*/SKILL.md` → 各技能（同目录 `RATIONALE.md` 是人面文档，不加载）
 - `rules/general/NN-*.md` → 红线规则（同目录 `RATIONALE.md` 是人面文档，不加载）
+- `kits/L1-karpathy/SKILL.md`、`kits/L2-superpowers/SKILL.md`、`kits/L3-anthropic/SKILL.md` → 三个组成部分入口（同目录 `RATIONALE.md` 是人面文档，不加载；L2 的 `references/` 按需加载）
 - `references/ai-methodology.md` → 完整方法论
 
 加载到具体团队/项目时，将 `skills/rd-digital-agent/references/project-context.md` 替换为该团队/项目的信息。

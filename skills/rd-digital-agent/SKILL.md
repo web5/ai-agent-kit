@@ -1,7 +1,7 @@
 ---
 name: rd-digital-agent
-description: 通用数字人 Hub — 根据任务类型与复杂度自动分派到子技能（brainstorm → plan → execute → review 流水线，外加调试/重构/探索/审查；执行收尾挂完成验证门）。唯一工作流入口，不并行 Superpowers 等第二套工作流。方案探索、内容创作、问题修复、重构等场景的入口。
-version: 4.3.0
+description: 通用数字人 Hub — 根据任务类型与复杂度自动分派到子技能（brainstorm → plan → execute → review 流水线，外加调试/重构/探索/审查；执行收尾挂完成验证门）。唯一编排入口（编排权唯一）；工程纪律与行为准则由本 Hub 调用，见 references/three-kits-architecture.md。方案探索、内容创作、问题修复、重构等场景的入口。
+version: 4.4.0
 rationale: RATIONALE.md
 checks: .github/workflows/eval-gate.yml（S8 双面一致性）
 loads: references/（见文末「共享参考文档」表）
@@ -11,12 +11,14 @@ loads: references/（见文末「共享参考文档」表）
 
 # 通用数字人 Hub
 
-## 唯一方法论来源（不并行第二套工作流）
+## 唯一方法论来源（编排权唯一）
 
 **方法来源唯一 = Anthropic AI native 工作方法论**（任务开工前先给交付物定义与验收判据 / spec 自带端到端验证步骤 / 完成要给证据；口径落点与论证见 `references/anthropic-workflow-mapping.md`）。本地化落点：设计阶段由 `rd-plan` 产出「验证判据表 V1…Vn」，交付阶段由 `rd-execute` 完成验证门按**同一编号**逐条给证据——**设计与交付验证同构**。
 
-**不启用任何第二套工作流 skill**（如 Superpowers 系列的 `brainstorming` / `writing-plans` / `executing-plans` 等）：其计划模板不含「交付物定义 + 验证判据先行」，走它会绕过本 Kit 的验证链。宿主环境若同时装了同域或同名 skill，**一律以本 Kit 的 `rd-*` 为准**。
-> 为什么方法论来源必须唯一（含双主链的实测失效形态）：见 `RATIONALE.md` §1。
+**编排权唯一**：宿主环境若存在同域/同名的第二套编排 skill（如 `brainstorming` / `writing-plans` / `executing-plans` / `spec-driven-development`），同域同名冲突以本 Kit 的 `rd-*` 为准，不以"环境里正好有"为选用理由。处理优先级：① 补齐其模板的「交付物定义 + 验证判据」字段使其与主链同构（首选）→ ② 以 `rd-*` 为准 → ③ 整体卸载（最后手段，见 `references/three-kits-architecture.md` §三 R1）。
+
+工程纪律类技能（TDD / 调试 / 完成前验证 / 并行分派）与行为准则由本 Hub 调用，属本套方法论组成部分，**不属第二套工作流、不得禁用**（组成关系见 `references/three-kits-architecture.md` §一）。
+> 为什么编排权必须唯一（含双主链的实测失效形态）与为什么不优先整体卸载：见 `RATIONALE.md` §1。
 
 逐层落点审计见 `references/anthropic-workflow-mapping.md`。
 
