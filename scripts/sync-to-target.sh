@@ -66,8 +66,11 @@ sync_one() {
     git add -A || exit 1
     git commit --quiet -m "chore(agent-kit): sync from ai-agent-kit" \
       || { echo "::error::提交失败：${repo}" >&2; exit 1; }
-    git push --quiet "https://x-access-token:${SYNC_TOKEN}@github.com/${repo}.git" "$PR_BRANCH" \
-      || { echo "::error::推送失败（同步分支可能与远端冲突）：${repo}" >&2; exit 1; }
+    # sync/agent-kit 由本脚本独占：每轮都从基线重建，因此与远端既有同名分支是「兄弟提交」
+    # 而非「祖先-后代」，普通 push 必被拒（非快进）。用 --force-with-lease：远端未被他人改动时
+    # 才覆盖，既能幂等重跑，又不会静默冲掉别人的提交。
+    git push --quiet --force-with-lease "https://x-access-token:${SYNC_TOKEN}@github.com/${repo}.git" "$PR_BRANCH" \
+      || { echo "::error::推送失败（同步分支已被他人改动，或 SYNC_TOKEN 无写权限）：${repo}" >&2; exit 1; }
 
     owner="${repo%/*}"
     existing=$(curl -s -H "Authorization: Bearer ${SYNC_TOKEN}" \
