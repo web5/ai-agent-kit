@@ -11,18 +11,18 @@ ai-agent-kit/
 ├── AGENT.md                    # 智能体常驻指南（始终加载的操作总则）
 ├── README.md                   # 本文件
 ├── skills/                     # 工作流引擎（数字人的「怎么干」）
-│   ├── rd-digital-agent/       #   Hub：按复杂度分派到下列子技能
-│   ├── requirement-translation/ #  需求转换（模糊意图→可验证需求 spec，下游质疑锚点）
+│   ├── rd-digital-agent/       #   Hub：唯一入口，按复杂度分派到下列子技能
+│   ├── requirement-translation/ #  链首：模糊意图→可验证需求 spec（验收判据/反例/待确认）
 │   ├── rd-brainstorm/          #   探索方案选项
-│   ├── rd-plan/                #   细化为任务列表
-│   ├── rd-execute/             #   逐项实现（迭代-校验）+ 收尾完成验证门（完成声明 = 验证证据）
-│   ├── rd-review/              #   实现者自查产物质量
-│   ├── ux-prototype-designer/  #   UX 原型交互设计师（需求→可点击交互 HTML 原型稿 + 独立交互质检）
+│   ├── rd-plan/                #   细化为任务列表 + 必出「验证判据表 V1…Vn」
+│   ├── rd-execute/             #   逐项实现（TDD）+ 收尾完成验证门（完成声明 = 验证证据）
+│   ├── rd-review/              #   实现者自查产物质量（含 V# 编号同构核对）
 │   ├── test-verification/      #   测试验证（独立第三方盲测，对开发/需求质疑）
+│   ├── ux-prototype-designer/  #   UX 原型交互设计师（需求→可点击交互 HTML 原型稿 + 独立交互质检）
 │   ├── tech-review/            #   方案/结构/数据/安全审查
 │   ├── systematic-debugging/   #   系统化调试（四阶段根因分析）
-│   ├── code-explore/           #   代码库探索（索引优先/影响面分析）
 │   ├── incremental-refactoring/  # 测试保护下的增量重构
+│   ├── code-explore/           #   代码库探索（索引优先/影响面分析）
 │   └── user-memory/            #   用户偏好与项目上下文记忆
 ├── rules/
 │   └── general/                # 通用红线规则（5 条，方法论级）
@@ -59,21 +59,38 @@ ai-agent-kit/
     └── eval-gate.yml           # PR 门禁：结构检查 + 改 kit 必须附评测报告
 ```
 
-## 核心方法论（一句话版）
+## 核心方法论（每条主张 + 依据 + 落点）
 
-- **瓶颈定位**：工作瓶颈在流程设计，而非单点执行速度。
-- **三层规则**：指南 → 技能/SOP → 红线机器化。
-- **循环 Loop**：每个阶段落盘版本化产物，下一阶段自动读取。
-- **版本化产物链**：intent → spec → 执行 → 带审查记录的交付 → 复盘。
-- **上下文工程**：上下文是有限资源——即时加载、定期压缩、结论落盘；复杂任务拆给独立上下文，主线程只留摘要。
-- **人审节点**：意图 / 大纲 / 交付前，三处把关。
-- **验证优先**：完成声明 = 验证证据，禁止「应该没问题」。
-- **开工前置（不分级）**：任何任务动手前先定交付物定义与验证判据，验收判据先行、完成后逐条对照证据（详见「方法来源」节）。
-- **设计与交付验证同构**：判据落盘为编号的「验证判据表 V1…Vn」（判据 / 验证手段 / PASS 条件 / 不通过怎么办），设计时写在 spec 收尾，交付时由 `rd-execute` 完成验证门按同一编号逐条给证据——全程只有这一份清单。
+**依据口径**：标注 `Anthropic` 的条目来自 *Best practices for Claude Code*（原句见「方法来源」节）；标注 `本地推导` 的是本团队从实践中收敛的纪律，不是 Anthropic 原文主张——分开标注，避免把推断当引用。
+
+| 主张 | 依据 | 落点 |
+|---|---|---|
+| **瓶颈定位**：瓶颈在流程设计，而非单点执行速度 | 本地推导：单点加速不改变返工率，返工来自需求与验证口径不清 | `references/ai-methodology.md` §一 |
+| **三层规则**：指南 → 技能/SOP → 红线机器化 | 本地推导：文本约定会被绕过，须降层为机器检查才稳定 | `rules/general/05-red-line-check.md` |
+| **循环 Loop**：每个阶段落盘版本化产物，下一阶段以产物为输入 | Anthropic：Explore → Plan → Code → Commit 的工作流建议；落盘纪律为本地叠加 | `rules/general/01-loop-workflow.md` |
+| **版本化产物链**：intent → spec → 执行 → 带审查记录的交付 → 复盘 | 本地推导（Anthropic 建议把 plan 写入文件、把约定沉淀进项目记忆） | `rules/general/03-versioned-artifacts.md` |
+| **上下文工程**：上下文是有限资源——即时加载、定期压缩、结论落盘；复杂任务拆独立上下文，主线程只留摘要 | Anthropic：上下文管理与压缩、用 subagent 隔离上下文的要点 | `rules/general/04-subagent-isolation.md` |
+| **人审节点**：意图 / 设计 / 交付前三处把关，顺序固定 逻辑 → 合规/红线 → 对照 spec | 本地推导（叠加 Anthropic「尽早纠偏」：人应在计划阶段而非收尾阶段介入） | `rules/general/02-human-in-loop.md` |
+| **验证优先**：完成声明 = 验证证据，禁止「应该没问题」 | Anthropic："Have Claude show evidence rather than asserting success" / "If you can't verify it, don't ship it" | `skills/rd-execute/SKILL.md` §完成验证门 |
+| **开工前置（不分级）**：任何任务动手前先定交付物定义与验证判据 | Anthropic：任务开工前讲清交付物与验收判据，给 agent 一个"能跑的检查" | `AGENT.md`「开工前置」+ `skills/rd-plan/references/thinking-checklist.md` 最小交付卡 |
+| **设计与交付验证同构**：判据落盘为编号的「验证判据表 V1…Vn」，设计时写在 spec 收尾，交付时按同一编号逐条给证据 | Anthropic："The most useful specs are self-contained: … finish with an end-to-end verification step" | `skills/rd-plan/SKILL.md` §验证判据表；`skills/rd-execute/SKILL.md` §完成验证门 |
+
+## 关键决策与理由（为什么这么定）
+
+| 决策 | 理由 |
+|---|---|
+| 验证判据必须编号落盘为 V1…Vn，不能只口头回读 | 原形态（对话里的两件套）实测失效：判据不落盘时，设计侧与交付侧会各说一份清单；宿主项目的计划模板里甚至没有判据字段 → 表现为"执行过程中设计时看不到交付验证"。编号使「设计 ↔ 交付」同构变成可机器核对的事 |
+| 删除独立的 `verification-before-completion` 技能，职责收编进 `rd-execute` | ① 与宿主环境同名的另一套 skill 冲突，加载哪份不确定；② 完成验证是执行环节的收尾动作，独立成技能反而可被跳过。收编后成为必经步骤，且对照同一份 V# |
+| 主链唯一 = `rd-*`，不并行第二套「计划 → 执行」类工作流 | 双主链 = 两个真相源。宿主项目实测：入口改走另一套工作流后，plan 产物的模板无交付物定义与判据字段，验证链被整体架空 |
+| 交付准入项含判据表，缺失即禁止进入实现 | "边写边补判据"等于用结果倒推标准；只有判据先行，它才有资格当 stop condition |
+| 红线机器化（`eval-gate` S1–S7） | 文本约定会退化。改 kit 的 PR 由 CI 强制：判据表 / 完成验证门 / 唯一方法论声明三处条文任一被删除即失败，防止验证链被悄悄摘除 |
+| 人审固定三处，不随意增减 | 过多人不堪重负、过少则失控；顺序固定 逻辑 → 合规/红线 → 对照 spec，防止合规问题被逻辑讨论掩盖 |
 
 ## 方法来源 · Anthropic 工作方法论引用
 
 本 kit 的「AI 协作工作方法论」吸收了 Anthropic 团队对 agentic coding 的建议（*Best practices for Claude Code*）：**给 agent 的每个任务，在开始前就要讲清交付物长什么样、验收/测试怎么跑**——让验证判据成为 agent 决定「何时算完成」的依据（"Give Claude a way to verify its work" / "If you can't verify it, don't ship it"）。
+
+上表标 `Anthropic` 的条目，其原句在本节逐条列出；标 `本地推导` 的条目无外部原句，属本团队纪律——两者不混标。
 
 本地实现把它翻译成自己的语言并落到每一层：
 
@@ -84,7 +101,9 @@ ai-agent-kit/
 | 展示证据而非口头宣称成功 | 完成声明 = 验证证据（按同一份 V1…Vn 逐条给证据） | `skills/rd-execute/SKILL.md` §完成验证门 |
 | spec 以端到端验证步骤收尾 | **验证判据表 V1…Vn** 作为 spec / 计划的收尾章节 + EARS 验收标准入 `requirements.md`；评测任务卡 = 固定输入 + 期望产物 + 评分点 | `skills/rd-plan/SKILL.md` §验证判据表；`digital-agent-eval/golden-tasks/` |
 
-**唯一方法论来源**：本 kit 的工作方式只采用上表这一套（`rd-*` 流水线 + 完成验证门）。宿主环境若同时装了 Superpowers 等第二套工作流 skill（`brainstorming` / `writing-plans` / `executing-plans` 等），**一律不启用**——其计划模板无「交付物定义 + 验证判据先行」，走它会绕过验证链，表现为"执行时看不到交付验证"。同域/同名冲突一律以本 kit 的 `rd-*` 为准。
+**唯一方法论来源**：本 kit 的工作方式只有上表这一套——`rd-*` 流水线 + 验证判据表 V1…Vn + 完成验证门。宿主环境若同时存在同域或同名的其它工作流 skill，一律以本 kit 的 `rd-*` 为准，不以"环境里正好有"为选用理由。
+
+> 脚注：本 kit 不并行第二套「计划 → 执行」类工作流模板，因为其计划产物不含「交付物定义 + 验证判据先行」，走它会绕过验证链——实测表现为"执行过程中设计时看不到交付验证"。需清理宿主环境时见 `scripts/uninstall-superpowers.sh`（幂等，可用 `scripts/restore-superpowers.sh` 回滚）。
 
 逐层落点审计（每条主张对应到文件与行、含已知缺口）见 [`references/anthropic-workflow-mapping.md`](references/anthropic-workflow-mapping.md)。
 
@@ -95,9 +114,10 @@ ai-agent-kit/
 ### 1. 作为智能体知识库加载
 将本仓库根目录整体作为智能体的知识源加载：
 - `AGENT.md` → 系统提示 / 项目入口
-- `skills/*` → 各技能
+- `skills/*` → 各技能（入口 = `rd-digital-agent`，其余由它分派）
 - `rules/general/*` → 红线规则
-- `references/ai-methodology.md` → 完整参考
+- `references/ai-methodology.md` → 完整参考（可当内部分享大纲）
+- `references/anthropic-workflow-mapping.md` → 每条方法论主张的逐层落点与缺口审计，改 kit 前先看这里
 
 ### 2. 套用到具体项目
 - 编辑 `skills/rd-digital-agent/SKILL.md` 里的「项目上下文」占位，换成你的团队领域、术语规范与写作/品牌风格等上下文（人格与语气由本体固定，见 AGENT.md）。
@@ -105,6 +125,25 @@ ai-agent-kit/
 
 ### 3. 分享给团队
 `references/ai-methodology.md` 已是成稿的方法论分享材料，可直接当内部分享 PPT 大纲或 WIKI 首页。
+
+### 4. 每个任务的标准动作（V1…Vn 贯穿设计与交付）
+
+任何任务（含小改动）都走这条线——判据全程只有一份清单：
+
+1. **动手前**：`rd-plan` 产出「验证判据表 V1…Vn」+ TODO（每项绑定 V#），回读用户确认。判据缺失不允许进 `rd-execute`。
+2. **实现中**：`rd-execute` 按任务 TDD 实现；判据不允许实现完再倒补。
+3. **交付前**：`rd-execute` 完成验证门按**同一编号**逐条实跑给证据 → `rd-review` 核对 V# 编号无遗漏、无漂移。
+
+验证判据表模板（缺任一一列 = 判据未定义）：
+
+| 编号 | 判据（做成 = 一句话可验证） | 验证手段（可跑的命令 / 测试名） | PASS 条件 | 不通过如何处理 |
+|---|---|---|---|---|
+| V1 | <行为成立的表述> | `npm test -- <file>` | N/N 通过 | 明确告知用户，不静默降级 |
+| V2 | <行为成立的表述> | `curl localhost:6000/__manifest__` | 返回 `version=$V` | 同上 |
+
+> 伪判据（"看着对" / "改完看效果" / "review 一下"）一律退回重写。
+> 非代码任务取类型化形态：文档 = 验收核点节；探索 = 收敛判据 + 质量评分点（见 `skills/rd-plan/references/thinking-checklist.md`）。
+> 完整定义：`skills/rd-plan/SKILL.md` §验证判据表；完成侧：`skills/rd-execute/SKILL.md` §完成验证门。
 
 ## 评测与基线（怎么证明 kit 真的变好了）
 
@@ -117,6 +156,13 @@ ai-agent-kit/
 | 评测体系定稿（五层过滤 + 五维 rubric） | [`references/eval-framework.md`](references/eval-framework.md) |
 
 被测 agent 就绪后的最快路径：打开 `evals/run-baseline.md`「脚本化执行」→ 填 `AGENT_CMD` → `bash scripts/run-eval.sh`。
+
+## 改动 kit 的门禁（贡献者必读）
+
+`.github/workflows/eval-gate.yml` 在 PR 时做两层检查：
+
+- **结构检查 S1–S7**：必需文件齐全、无孤儿 skill、frontmatter `name` 与目录名一致、无占位符残留、路由目标存在、红线有执行手段；并强制 `rd-plan` 的**验证判据表**、`rd-execute` 的**完成验证门**、`AGENT.md` 的**唯一方法论来源声明**三处条文存在——任一被删除即 CI 失败（防止验证链被悄悄摘除）。
+- **评测报告门禁**：改动 `AGENT.md` / `skills/` / `rules/` / `references/` 必须附评测报告（`evals/reports/`）；若改动不影响智能体行为（纯排版、错别字、纯新增文档），在 **PR 描述**加 `skip-eval` 标签并在 **commit message** 说明理由。
 
 ## 同步到其他仓库（可选）
 
@@ -144,3 +190,14 @@ ai-agent-kit/
 ## 与你的主项目的关系
 
 本模板从某个具体项目抽象而来：保留 workflow 型 skills 与三层结构，剔除工程/业务专属规则，使数字人能力可被任意项目复用。同步机制把本仓库的演进持续回流到目标项目的 `.codebuddy/agent-kit/`，互不覆盖。
+
+## 版本演进
+
+| 版本 | 日期 | 变更要点 |
+|---|---|---|
+| v1.3 | 2026-09-10 | **设计与交付验证同构**：验证判据表 V1…Vn 成为 spec / 计划的收尾章节，交付时按同一编号勾核；删除独立 `verification-before-completion` 技能、职责收编进 `rd-execute`；新增唯一方法论来源声明；`eval-gate` 新增 S7 机器检查 |
+| v1.2 | 2026-09-04 | 六处逃逸口统一挂「分级不压缩交付物 + 验证判据」不变量；非代码任务的判据先行最小形态（验收核点节）固化 |
+| v1.1 | 2026-09-04 | 数字人画像口径同步；数字人产品评测换基线判定 |
+| v1.0 | 2026-09 上旬 | 简化档升级为「最小交付卡」（4 行必答 + 类型化验证判据） |
+
+> 各版本的逐层落点与待同步点闭合状态见 `references/anthropic-workflow-mapping.md` §六。
