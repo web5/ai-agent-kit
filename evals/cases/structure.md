@@ -1,8 +1,8 @@
 # L1 静态结构检查清单（structure）
 
-测什么：kit 结构完备性——文件齐全、无孤儿 skill、frontmatter 完整、占位残留、路由指向的 skill 存在。全部为**机器可判定**的静态检查，不依赖模型，CI 每次 push 必跑（`eval-gate.yml`）。
+测什么：kit 结构完备性——文件齐全、无孤儿 skill、frontmatter 完整、占位残留、路由指向的 skill 存在、红线含判定手段（S6）、交付验证链条文存在（S7）、双面版本一致（S8）。全部为**机器可判定**的静态检查，不依赖模型，CI 每次 push 必跑（`eval-gate.yml`）。
 
-> 本清单是 L1 检查点的用例化：脚本据此实现，人工据此核对。检查点新增须同步更新 `eval-gate.yml`。
+> 本清单是 L1 检查点的用例化：脚本（`scripts/check-structure.sh`）据此实现，人工据此核对。检查点新增须同步更新脚本与本清单。
 
 ## 检查项
 
@@ -33,7 +33,7 @@
 
 `skills/` 下每个 skill 必须被至少一处引用（分派决策树 / 路由用例 / README 目录结构），否则为孤儿。
 
-当前 12 个 skill 及引用来源：
+当前 13 个技能（Hub + 12 子技能）及引用来源：
 
 | Skill | 引用来源 |
 |-------|---------|
@@ -47,7 +47,8 @@
 | `incremental-refactoring` | 决策树「重构/清理/消除重复」 |
 | `code-explore` | 决策树「X 在哪实现/理解结构」 |
 | `tech-review` | 决策树「架构/选型/安全/信息结构」 |
-| `rd-execute` 完成验证门 | 决策树「任何交付前收尾」 |
+| `requirement-translation` | 决策树「模糊需求/我要个X」链首 + 路由用例 R22 |
+| `test-verification` | 评审链 §5 独立盲测 + 路由用例 R23 |
 | `user-memory` | 路由用例 R19/R20 + AGENT.md 记忆 |
 
 判定：`skills/<name>/SKILL.md` 存在但其 `<name>` 不在上表 → 孤儿，不通过。
@@ -70,20 +71,11 @@
 
 `rd-digital-agent/SKILL.md` 分派决策树中引用的每个子技能名，必须在 `skills/` 下存在对应 `SKILL.md`。
 
-判定：决策树引用 `.skills/xxx` 而 `skills/xxx/SKILL.md` 不存在 → 不通过（分派指向死链）。`ux-prototype-designer` 为决策树新增分支，须在 `skills/ux-prototype-designer/SKILL.md` 存在。
-
-### S9 · 方法论三组成部分结构完整
-
-规范见 `references/three-kits-architecture.md`，脚本项与 `eval-gate.yml` S9 同步维护。
-
-- **S9-1 必需文件**：`kits/README.md`、`kits/L1-karpathy/SKILL.md`、`kits/L2-superpowers/SKILL.md`、`kits/L3-anthropic/SKILL.md`、`references/three-kits-architecture.md` 缺任一即不通过。
-- **S9-2 frontmatter 与体积**：`kits/L*/SKILL.md` 必须含 `version`，且 `name` 与目录名一致；AI 常驻面 ≤150 行（人面外置 `RATIONALE.md`）。
-- **S9-3 双面版本同步**：`kits/L*/RATIONALE.md` 的 `reviewed-at-version` 必须等于同目录 `SKILL.md` 的 `version`（确不影响设计理由则标 `stale: true`）。
-
-判定：任一子项命中 → 不通过（防组成部分退化为空壳、人面与 AI 面漂移）。
+判定：决策树引用 `skills/xxx` 而 `skills/xxx/SKILL.md` 不存在 → 不通过（分派指向死链）。
 
 ## 判定与通过线
 
-- 六项（S1~S5 + S9）**全部通过**才视为 L1 达标；
+- 八项（S1~S8）**全部通过**才视为 L1 达标；
 - 任何一项失败即阻断合并（成熟度 L3「红线机器化」的最低要求）；
-- 脚本实现：`eval-gate.yml` 的「结构完备性检查」step；本清单是它的用例化来源，二者必须同步维护。
+- 脚本实现：`scripts/check-structure.sh`（由 `eval-gate.yml` 的「结构完备性检查」step 调用）；本清单是它的用例化来源，二者必须同步维护。
+- S9（`kits/` 三组成部分结构）已随资产模型再设计移除，规范见 `references/methodology-design.md`。

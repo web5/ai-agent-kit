@@ -13,7 +13,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: 结构完备性检查（L1 · S1~S9）
+      - name: 结构完备性检查（L1 · S1~S8）
         run: bash scripts/check-structure.sh
 
       - name: 评测报告门禁
@@ -23,7 +23,7 @@ jobs:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           git fetch origin "$BASE_SHA" --depth=1 2>/dev/null || true
-          kit_changes=$(git diff --name-only "$BASE_SHA" HEAD -- AGENT.md skills/ rules/ references/ kits/ | wc -l | tr -d ' ')
+          kit_changes=$(git diff --name-only "$BASE_SHA" HEAD -- AGENT.md skills/ rules/ references/ | wc -l | tr -d ' ')
           report_changes=$(git diff --name-only "$BASE_SHA" HEAD -- evals/reports/ | grep -v 'TEMPLATE.md' | wc -l | tr -d ' ')
           echo "kit 内容变更文件数: $kit_changes；新增评测报告数: $report_changes"
           if [ "$kit_changes" -gt 0 ] && [ "$report_changes" -eq 0 ]; then

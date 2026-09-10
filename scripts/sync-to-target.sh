@@ -57,7 +57,7 @@ sync_one() {
 
     rm -rf .codebuddy/agent-kit || exit 1
     mkdir -p .codebuddy/agent-kit || exit 1
-    cp -R "$SRC_ROOT/skills" "$SRC_ROOT/rules" "$SRC_ROOT/references" "$SRC_ROOT/kits" "$SRC_ROOT/AGENT.md" .codebuddy/agent-kit/ \
+    cp -R "$SRC_ROOT/skills" "$SRC_ROOT/rules" "$SRC_ROOT/references" "$SRC_ROOT/AGENT.md" .codebuddy/agent-kit/ \
       || { echo "::error::拷贝 kit 资产失败：${repo}" >&2; exit 1; }
     cp "$SRC_ROOT/README.md" .codebuddy/agent-kit/README.md \
       || { echo "::error::拷贝 README 失败：${repo}" >&2; exit 1; }
@@ -88,7 +88,7 @@ sync_one() {
 
     response=$(curl -sS -X POST -H "Authorization: Bearer ${SYNC_TOKEN}" \
       -H "Content-Type: application/json" \
-      -d "{\"title\":\"chore(agent-kit): sync from ai-agent-kit\",\"head\":\"${PR_BRANCH}\",\"base\":\"${base}\",\"body\":\"自动同步 ai-agent-kit 的 skills/rules/references/kits/AGENT.md/README.md 到 .codebuddy/agent-kit\"}" \
+      -d "{\"title\":\"chore(agent-kit): sync from ai-agent-kit\",\"head\":\"${PR_BRANCH}\",\"base\":\"${base}\",\"body\":\"自动同步 ai-agent-kit 的 skills/rules/references/AGENT.md/README.md 到 .codebuddy/agent-kit\"}" \
       "https://api.github.com/repos/${repo}/pulls" 2>&1 || true)
     if printf '%s' "$response" | grep -q '"html_url"'; then
       echo "    PR 已创建（${PR_BRANCH} -> ${base}）"
