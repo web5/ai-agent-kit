@@ -16,6 +16,20 @@ RUNS="${5:-2}"
 
 [ -d "$WORKSPACE" ] || { echo "错误: 工作区不存在: $WORKSPACE" >&2; exit 1; }
 
+# 与 check-artifacts.sh 同一判定逻辑：支持多候选命名（a.md|b.md）与子目录落盘
+resolve_artifact() {
+  local ws="$1" spec="$2" c found cands
+  IFS='|' read -r -a cands <<< "$spec"
+  for c in "${cands[@]}"; do
+    c=$(printf '%s' "$c" | tr -d '[:space:]')
+    [ -n "$c" ] || continue
+    [ -f "$ws/$c" ] && { printf '%s' "$c"; return 0; }
+    found=$(find "$ws" -type f -name "$(basename "$c")" 2>/dev/null | head -1)
+    [ -n "$found" ] && { printf '%s' "${found#$ws/}"; return 0; }
+  done
+  return 1
+}
+
 REPORT_DIR="$KIT_ROOT/evals/reports"
 REPORT_FILE="$REPORT_DIR/${ID}-${DATE}.md"
 [ -f "$REPORT_FILE" ] && { echo "错误: 报告已存在: $REPORT_FILE" >&2; exit 1; }
@@ -32,7 +46,7 @@ for task in "$TASKS_DIR"/T[0-9]*.md; do
     file=$(echo "$line" | sed -n 's/^[[:space:]]*- \[ \] `\([^`]*\)`.*/\1/p')
     [ -n "$file" ] || continue
     total=$((total + 1))
-    if [ -f "$WORKSPACE/${file}" ]; then
+    if resolve_artifact "$WORKSPACE" "$file" >/dev/null; then
       hit=$((hit + 1))
     fi
   done < "$task"

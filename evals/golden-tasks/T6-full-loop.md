@@ -9,13 +9,13 @@
 
 ## 期望产物（文件系统核对）
 
-- [ ] `intent.md`：目标 / 受众 / 范围边界 / 成功标准
-- [ ] `options.md`：≥ 2 个方案 + 推荐 + 取舍
-- [ ] `spec.md`：手册结构与验收标准
-- [ ] `todo.md`：拆分后的任务列表
-- [ ] `deliverable.md`：带教手册大纲（最终交付物）
-- [ ] `review-record.md`：交付前审查记录
-- [ ] `retro.md`（或交付物内嵌）：复盘与下一轮 intent 建议
+- [ ] `intent.md|00-intent.md`：目标 / 受众 / 范围边界 / 成功标准
+- [ ] `options.md|02-brainstorm.md|brainstorm.md`：≥ 2 个方案 + 推荐 + 取舍
+- [ ] `spec.md|requirements.md|design.md`：手册结构与验收标准
+- [ ] `todo.md|tasks.md`：拆分后的任务列表
+- [ ] `deliverable.md|onboarding-30d-handbook-outline.md`：带教手册大纲（最终交付物）
+- [ ] `review-record.md|07-review-report.md|review-report.md`：交付前审查记录
+- [ ] `retro.md`：复盘与下一轮 intent 建议（当前主链末端无强制落点，缺失即计 FAIL）
 
 ## 质量评分点（喂给 judge）
 

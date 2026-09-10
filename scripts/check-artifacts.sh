@@ -13,6 +13,22 @@ TASKS_DIR="$KIT_ROOT/evals/golden-tasks"
 
 [ -d "$WORKSPACE" ] || { echo "错误: 工作区不存在: $WORKSPACE" >&2; exit 1; }
 
+# 解析一条期望产物（可能含多候选 `a.md|b.md`）：
+#   1) 先按工作区相对路径精确匹配；2) 再按 basename 在工作区内递归查找（技能可能落盘在子目录）。
+# 命中则回显实际相对路径，未命中回显空。
+resolve_artifact() {
+  local ws="$1" spec="$2" c found cands
+  IFS='|' read -r -a cands <<< "$spec"
+  for c in "${cands[@]}"; do
+    c=$(printf '%s' "$c" | tr -d '[:space:]')
+    [ -n "$c" ] || continue
+    [ -f "$ws/$c" ] && { printf '%s' "$c"; return 0; }
+    found=$(find "$ws" -type f -name "$(basename "$c")" 2>/dev/null | head -1)
+    [ -n "$found" ] && { printf '%s' "${found#$ws/}"; return 0; }
+  done
+  return 1
+}
+
 # 选定任务卡（与 run-eval.sh 同一匹配逻辑）
 task_files=()
 if [ -n "$TASK_ID" ]; then
@@ -38,12 +54,14 @@ for task in "${task_files[@]}"; do
   name=$(basename "$task" .md)
   echo "--- $name ---"
   # 提取期望产物中的文件名（反引号包裹）；非文件项（对话/过程性检查）自动跳过
+  # 支持多候选命名（a.md|b.md）与子目录落盘（候选名在工作区内递归查找）
   while IFS= read -r line; do
     file=$(echo "$line" | sed -n 's/^[[:space:]]*- \[ \] `\([^`]*\)`.*/\1/p')
     [ -n "$file" ] || continue
     total_files=$((total_files + 1))
-    if [ -f "$WORKSPACE/${file}" ]; then
-      echo "  [PASS] ${file}"
+    hit_path=$(resolve_artifact "$WORKSPACE" "$file" || true)
+    if [ -n "$hit_path" ]; then
+      echo "  [PASS] ${file}  → ${hit_path}"
       total_hit=$((total_hit + 1))
     else
       if echo "$line" | grep -q '（或同等命名）\|（或成稿内嵌）'; then
