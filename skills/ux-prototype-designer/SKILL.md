@@ -86,6 +86,11 @@ version: 1.0.0
 
 原型稿经用户确认 → 交 `rd-plan` 回填页面规格书 → `rd-execute` 编码。本角色不写最终实现。
 
+## 跨角色质疑边（见 `../rd-digital-agent/references/challenge-playbook.md`）
+
+- 本角色**发起**：质疑 `requirement-translation`（交互需求是否真有价值 / 可行）、质疑 `rd-plan` / `tech-review`（技术方案能否支撑交互）。
+- 本角色**接收**：产品评审（人）→ 设计确认；`rd-execute`（开发）→ 交互不可实现；`test-verification`（测试）→ 原型交互不合验收判据。
+
 ## 不做什么
 
 - 不做产品价值判断（要不要做、值不值得做，交 rd-plan §3.5 / 用户）

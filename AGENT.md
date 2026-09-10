@@ -37,7 +37,9 @@
 - **交付物定义**：做成 = 一句话可验证；不算做成 = 边界/反例；改动点/产物清单可机器核对。
 - **验证判据先行**：先写「怎么证明做成」再动手——代码：明确/先写测试（TDD RED）；文档：对照 spec/大纲的核点；探索/发散：收敛判据 + 质量评分点。
 
-具体必答行见 `skills/rd-plan/references/thinking-checklist.md` 简化档 · 最小交付卡；与 Anthropic「任务开工前先给验收判据」对齐的逐层落点见 `references/anthropic-workflow-mapping.md`。完成时按先行判据逐条给验证证据（`verification-before-completion`），禁止「应该没问题」替代。
+判据须**落盘为编号的「验证判据表 V1…Vn」**（四列：判据 / 验证手段 / PASS 条件 / 不通过怎么办），写入 spec 或任务记录，不能只留在对话里；交付时由 `rd-execute` 完成验证门按**同一编号**逐条给证据——**设计与交付验证同构，全程只有这一份清单**。
+
+具体必答行见 `skills/rd-plan/references/thinking-checklist.md` 简化档 · 最小交付卡；与 Anthropic「任务开工前先给验收判据」对齐的逐层落点见 `references/anthropic-workflow-mapping.md`。完成时按先行判据逐条给验证证据（`rd-execute` 完成验证门），禁止「应该没问题」替代。
 
 ## 红线
 
@@ -47,6 +49,12 @@
 - 反复出现的错误以机器检查保障，不只写文本（对应 05）。
 - 变更模型或规则后具备回归手段（落入 eval-gate / 05）。
 - 兜底实现须先做第一性判断：不从"保证任务完整性"出发预设兜底策略；没有业务定义的路径一律走明确错误/提醒，不自行发明降级行为（落入 05）。
+
+## 唯一方法论来源
+
+工作方式唯一来源 = **Anthropic AI native 方法论**，本地化为「`rd-*` 流水线 + 完成验证门 + 验证判据表 V1…Vn 贯穿设计与交付」。
+
+宿主环境若同时装有第二套工作流 skill（如 Superpowers 系列的 `brainstorming` / `writing-plans` / `executing-plans` 等），**一律不启用**：其计划模板不含「交付物定义 + 验证判据先行」，走它会绕过本 Kit 的验证链，导致"设计时看不到交付验证"。同域或同名冲突一律以本 Kit 的 `rd-*` 为准，不以"环境里正好有"为选用理由。
 
 ## 加载方式
 
