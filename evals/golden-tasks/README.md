@@ -7,7 +7,7 @@
 | T1 | rd-brainstorm | 模糊需求 → 方案探索 |
 | T2 | rd-plan | 已定方案 → 任务拆分 |
 | T3 | rd-execute + rd-review | 写作/执行 → 交付 |
-| T4 | systematic-debugging + verification | 症状 → 根因分析 |
+| T4 | systematic-debugging + `rd-execute` 完成验证门 | 症状 → 根因分析 |
 | T5 | tech-review / rd-review | 产物 → 质量审查 |
 | T6 | 全流水线 | 端到端产物链 |
 

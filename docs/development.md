@@ -38,21 +38,21 @@
 
 ## 3. 提交前本地自检
 
-结构检查（CI 的 S1~S9）已抽为脚本，**本地与 CI 同一份真相源**，不必等 CI 才发现问题：
+结构检查（CI 的 S1~S8）已抽为脚本，**本地与 CI 同一份真相源**，不必等 CI 才发现问题：
 
 ```bash
 bash scripts/check-structure.sh   # 退出码 0 = 结构门禁可通过
 ```
 
-- 覆盖：必需文件齐全（S1）、无孤儿 skill（S2）、frontmatter（S3）、占位残留（S4）、路由目标存在（S5）、红线有执行手段（S6）、验证链条文（S7）、双面一致性（S8）、三组成部分结构（S9）。
+- 覆盖：必需文件齐全（S1）、无孤儿 skill（S2）、frontmatter（S3）、占位残留（S4）、路由目标存在（S5）、红线有执行手段（S6）、验证链条文（S7）、双面一致性（S8）。
 - 逐条含义见 `README.md` §改动 kit 的门禁 与 `references/dual-audience-design.md`。
 
 ## 4. 提交路径与门禁
 
 到 `master` / `main` 的 PR 触发 `eval-gate` 两步：
 
-1. **结构完备性检查（S1~S9）**——即 §3 的脚本；
-2. **评测报告门禁**——改了 `AGENT.md` / `skills/` / `rules/` / `references/` / `kits/` 时，必须在 `evals/reports/` 附一份新报告；纯排版 / 错别字 / 纯新增文档可在 **PR 描述**加 `skip-eval` 并在 **commit message** 说明理由，豁免门禁。
+1. **结构完备性检查（S1~S8）**——即 §3 的脚本；
+2. **评测报告门禁**——改了 `AGENT.md` / `skills/` / `rules/` / `references/` 时，必须在 `evals/reports/` 附一份新报告；纯排版 / 错别字 / 纯新增文档可在 **PR 描述**加 `skip-eval` 并在 **commit message** 说明理由，豁免门禁。
 
 > 评测报告门禁依赖 PR 元数据（base sha / PR 描述），**本地无法完全模拟**，判定规则以上面为准。
 
