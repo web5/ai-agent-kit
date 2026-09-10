@@ -216,7 +216,8 @@ AI native 最佳实践持续演进（Karpathy 行为纪律 → Superpowers 工�
 - ✅ L1 结构完整：三层结构、13 个 skills、5 条红线（**每条均含判定手段**）、CI 结构检查（`eval-gate.yml` S1–S8）就绪；4 个核心 skill 已外置人面 `RATIONALE.md`
 - ✅ L2/L3/L4 用例集已落盘：路由用例 21 条（`evals/cases/routing.md`）、陷阱用例 6 条（`evals/cases/behavior.md`）、端到端任务卡 6 张 + 五维 RUBRIC（`evals/golden-tasks/`）
 - ✅ 运行手册就绪：日常评测（`evals/README.md`）+ 干净基线（`evals/run-baseline.md`，judge 隔离防自评污染）
-- ❌ 待办：① 跑首份基线评测报告（没有基线就没有进化曲线；须按 `evals/run-baseline.md` 在干净上下文执行）② L5 实战验证需积累真实人审打回率数据 ③ 红线示例需按项目实例化
+- ✅ **首份基线已产出**：`evals/reports/6373b99-2026-09-10.md`（通过率 6/6，均分 13.2；judge 与被测分属独立会话）
+- ❌ 待办：① 人工复检 ≥20%（本轮 0%，未达手册要求）② 修任务卡产物命名与技能实际命名不一致（基线最大发现，导致机器落盘率失真至 14%）③ 固定被测模型/温度、每任务 ≥2 次重跑（本轮 1 次，D3/D5 受无人值守限制偏低）④ L5 实战验证需积累真实人审打回率数据 ⑤ 红线示例需按项目实例化
 
 ## 与你的主项目的关系
 

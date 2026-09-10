@@ -9,3 +9,6 @@
 .env
 .env.*
 !.env.example
+
+# 评测运行产物（evals/.runs/，基线证据不入库，报告在 evals/reports/）
+evals/.runs/
