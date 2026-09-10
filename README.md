@@ -47,6 +47,8 @@ ai-agent-kit/
 │   ├── fe-dev-common.md                    # 前端开发通用技能与规则（业界通用能力包）
 │   ├── be-dev-common.md                    # 后端开发通用技能与规则（业界通用能力包）
 │   └── dual-audience-design.md             # 双面读者分层设计（AI 面 / 人面：三层加载 + 归属判据 + 防漂移）
+├── docs/
+│   └── development.md          #   开发与提交环境（贡献者：工具链 / 凭证 / 本地自检）
 ├── digital-agent-eval/         # 数字人技术产品型评测（定义维验收，独立于 evals/）
 ├── evals/                      # 回归评测体系（评估 kit 自身进化程度）
 │   ├── README.md               # 运行手册（怎么跑）
@@ -58,6 +60,7 @@ ai-agent-kit/
 │   ├── sync-to-target.sh       # 同步到其他仓库的脚本（目标可配置）
 │   ├── run-eval.sh             # 测评编排（AGENT_CMD 参数化，需被测 agent 无头调用）
 │   ├── check-artifacts.sh      # 产物落盘核对（D1 机器可判定）
+│   ├── check-structure.sh      # 结构检查 S1~S9（本地自检与 CI 的同一份脚本）
 │   ├── gen-report.sh           # 评测报告骨架生成
 │   ├── uninstall-superpowers.sh #  卸载全局 Superpowers 工作流 skill（可回滚）
 │   └── restore-superpowers.sh   #  卸载回滚（按备份清单恢复 symlink）
@@ -189,21 +192,26 @@ AI native 最佳实践持续演进（Karpathy 行为纪律 → Superpowers 工�
 
 ## 改动 kit 的门禁（贡献者必读）
 
-`.github/workflows/eval-gate.yml` 在 PR 时做两层检查：
+`.github/workflows/eval-gate.yml` 在 PR 时做两层检查（工具链 / 凭证 / 本地自检见 [`docs/development.md`](docs/development.md)）：
 
-- **结构检查 S1–S8**：必需文件齐全、无孤儿 skill、frontmatter `name` 与目录名一致、无占位符残留、路由目标存在、红线有执行手段；并强制 `rd-plan` 的**验证判据表**、`rd-execute` 的**完成验证门**、`AGENT.md` 的**唯一方法论来源声明**三处条文存在——任一被删除即 CI 失败（防止验证链被悄悄摘除）。
+- **结构检查 S1–S9**（本地与 CI 同一份脚本：`bash scripts/check-structure.sh`）：必需文件齐全、无孤儿 skill、frontmatter `name` 与目录名一致、无占位符残留、路由目标存在、红线有执行手段；并强制 `rd-plan` 的**验证判据表**、`rd-execute` 的**完成验证门**、`AGENT.md` 的**唯一方法论来源声明**三处条文存在——任一被删除即 CI 失败（防止验证链被悄悄摘除）。
   - **S8 双面一致性**（规范见 `references/dual-audience-design.md`）：S8-1 `SKILL.md` 行数上限（普通 ≤150 / Hub ≤260）+ `version` 字段；S8-2 `RATIONALE.md` 的 `reviewed-at-version` 必须等于 `SKILL.md` 的 `version`（防人面与 AI 面漂移，确不影响可标 `stale: true`）；S8-3 每条红线必须含「判定手段」节；S8-4 `SKILL.md` 出现外部口径引用须指向外置文件（论证属人面，不得占常驻上下文）。
 - **评测报告门禁**：改动 `AGENT.md` / `skills/` / `rules/` / `references/` 必须附评测报告（`evals/reports/`）；若改动不影响智能体行为（纯排版、错别字、纯新增文档），在 **PR 描述**加 `skip-eval` 标签并在 **commit message** 说明理由。
 
 ## 同步到其他仓库（可选）
 
-可将本仓库推送到 `master` 时，自动把 `skills/`、`rules/`、`references/`、`kits/`、`AGENT.md` 拷贝到目标仓库的 `.codebuddy/agent-kit/` 并开 PR（幂等，无变更则跳过）。
+可将本仓库推送到 `master` 时，自动把 `skills/`、`rules/`、`references/`、`kits/`、`AGENT.md` 拷贝到目标仓库的 `.codebuddy/agent-kit/` 并开 PR（幂等，无变更则跳过）。**支持一次同步到多个目标仓库**；单个目标失败不阻塞其余目标。
 
 前置条件（在 ai-agent-kit 仓库的 Settings → Secrets/Variables 配置）：
-- **Secret** `SYNC_TOKEN`：对目标仓库有 write 权限的 PAT。
-- **Variable** `TARGET_REPO`（可选，默认本模板的源项目仓库）、`TARGET_BASE`（可选，默认 `master`）。
+- **Secret** `SYNC_TOKEN`：对各目标仓库有 write 权限的 PAT。
+- **Variable** `TARGET_REPOS`（可选）：逗号分隔的多个目标，如 `web5/web_system,web5/other`；单项可写 `owner/repo#分支` 单独指定基线分支。未设置时回退到旧的单目标 `TARGET_REPO`，再回退到默认值。
+- **Variable** `TARGET_BASE`（可选，默认 `master`）：未用 `#分支` 指定时的基线分支。
 
-也可本地手动触发：`SYNC_TOKEN=xxx TARGET_REPO=owner/repo bash scripts/sync-to-target.sh`。
+也可本地手动触发（环境与凭证见 `docs/development.md` §6）：
+
+```bash
+SYNC_TOKEN=xxx TARGET_REPOS="owner/repo-a,owner/repo-b#main" bash scripts/sync-to-target.sh
+```
 
 > 默认目标即本模板的源项目（web_system），可按需改为任意仓库。
 
