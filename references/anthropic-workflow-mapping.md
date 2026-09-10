@@ -4,7 +4,7 @@
 >
 > 本文 = 落点审计的沉淀。配套内容不变量条文已落：`AGENT.md`「开工前置」+ `skills/rd-plan/references/thinking-checklist.md` 简化档 · 最小交付卡。
 >
-> 版本：2026-09-10 v1.3（v1 = 简化档升级同批落地；v1.1 = profile 口径同步 + 数字人评测换基线判定；v1.2 = §六 待同步点 2/3 闭合——逃逸口统一不变量声明 + 非代码任务判据先行最小形态固化；**v1.3 = 设计与交付验证同构**：验证判据从"对话中的两件套"升级为编号落盘的「验证判据表 V1…Vn」（spec 收尾章节），交付侧按同一编号勾核；`verification-before-completion` 技能删除、职责收编进 `rd-execute` 完成验证门；新增唯一方法论来源声明——不并行 Superpowers 等第二套工作流）。文件行号以该日期快照为准，后续以节名定位。
+> 版本：2026-09-10 v1.3（v1 = 简化档升级同批落地；v1.1 = profile 口径同步 + 数字人评测换基线判定；v1.2 = §六 待同步点 2/3 闭合——逃逸口统一不变量声明 + 非代码任务判据先行最小形态固化；**v1.3 = 设计与交付验证同构**：验证判据从"对话中的两件套"升级为编号落盘的「验证判据表 V1…Vn」（spec 收尾章节），交付侧按同一编号勾核；`verification-before-completion` 技能删除、职责收编进 `rd-execute` 完成验证门；新增唯一方法论来源声明——不并行 Superpowers 等第二套工作流）；**v1.4 = 双面分层（AI 面 / 人面）**：定义资产分离 AI 常驻面与人面（人面外置 `RATIONALE.md`，不占常驻上下文），红线五条补齐「判定手段」节，`eval-gate` 新增 S8 双面一致性检查，规范见 `references/dual-audience-design.md`。文件行号以该日期快照为准，后续以节名定位。
 
 ## 〇、一句话结论
 
@@ -53,6 +53,7 @@
 | 9 | 元层：任务卡先行定义交付物+评分 | golden-task = 固定输入 + 期望产物（文件系统核对）+ 质量评分点 | `evals/golden-tasks/T3`、`digital-agent-eval/golden-tasks/T1~T6` | 评测资产 |
 | 10 | 判据先于人审 | 意图确认人审节点（审的就是成功标准是否可验证） | `AGENT.md` §人审节点；`rules/general/02-human-in-loop.md` | 全链档 |
 | 11 | 机器化保障判据不被口头跳过 | 红线 03 产物落盘；完成门进 skill 与 eval-gate | `rules/general/03-versioned-artifacts.md`；`.github/workflows/eval-gate.yml` | 元层 |
+| 13 | **本地推导**：判据要起作用须留在注意力中心 | 双面分层——AI 面（指令）有体积上限，人面（论证 / why / 演进）外置 `RATIONALE.md` 按需加载，不挤占常驻上下文；判据类内容是唯一双面同源的内容 | `references/dual-audience-design.md`；`skills/*/RATIONALE.md`；`rules/general/RATIONALE.md` | 全部定义资产 |
 
 ## 三、缺口与成因（诚实结论）
 
@@ -86,6 +87,9 @@
 ## 六、变更门禁与本文件维护
 
 - 本文属 `references/`，改动 = 改 kit：PR 须附评测报告（`.github/workflows/eval-gate.yml`），或按门禁说明用 skip-eval 并注明理由。
+- **已完成（2026-09-10 · v1.4 双面分层）**：
+  0. ① 新增 `references/dual-audience-design.md`：归属三问、L0/L1/L2 三层预算、三类资产（rules/skills/知识库）配比、版本同步规则、迁移路径与反例集。② `rd-plan` / `rd-execute` / `rd-digital-agent` / `ux-prototype-designer` 的人面外置为 `RATIONALE.md`（此前只存在于对话里的决策背景落盘）。③ `rules/general` 五条补齐「判定手段」节——此前 01–04 只有约束文本、无检查命令，与 05「靠自觉的不算红线」自相矛盾；设计理由集中到 `rules/general/RATIONALE.md`。④ Hub 团队模式架构图与 `task()` 调用示例外置为 `references/team-mode-playbook.md`（`SKILL.md` 229 → 187 行），摘要纪律补为「结论 + 依据 + 未决项」。⑤ `eval-gate` 新增 S8：行数上限 + `version` 字段 / `RATIONALE` 版本同步 / 红线必须有判定手段 / 说服性引用必须外置。
+     **未完成动作 = 重跑评测**（与 v1.3 同一笔债，仍未执行）：判据形态与技能集变更后 digital-agent-eval 应换基线重跑，需 `AGENT_CMD`（被测 agent 无头调用命令）与 judge 隔离环境。
 - **已完成（2026-09-10 · v1.3 设计与交付验证同构）**：
   0. ① 同构载体落地：`skills/rd-plan/SKILL.md` 新增必填章节「验证判据表（V1…Vn）」（四列：判据 / 验证手段 / PASS 条件 / 不通过怎么办），TODO 每项绑 V#，`tasks.md` 每项绑 V#；交付准入项升级为「计划 + 方案 + 验证判据表（强制）+ 原型稿（按需）」，判据缺失禁入 `rd-execute`。② 完成侧：`verification-before-completion` 技能删除，职责收编进 `skills/rd-execute/SKILL.md` §完成验证门，输出按同一份 V# 勾核；`rd-review` 增加 V# 编号同构核对。③ 唯一方法论来源声明（`AGENT.md` / `README.md` / `skills/rd-digital-agent/SKILL.md`）：不并行 Superpowers 等第二套工作流，理由是其计划模板无「交付物定义 + 验证判据先行」——这正是宿主项目出现「执行时看不到交付验证」的根因。④ 受影响引用已同步：`thinking-checklist`、`test-verification`、`blind-test-playbook`、`systematic-debugging`、`incremental-refactoring`、`eval-framework`、`agent-definition-template`、`digital-agent-profile`、`evals/*`、`digital-agent-eval/*`。
      **未完成动作 = 重跑评测**：技能集与判据形态变更属「画像/口径变更」→ digital-agent-eval 换基线（重跑 routing/behavior/persona + T1~T6，新报告落盘 `reports/<新hash>-<日期>.md`）；evals 侧 L1 结构与 L2 路由期望已同步更新。
