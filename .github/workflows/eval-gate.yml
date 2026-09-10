@@ -89,6 +89,28 @@ jobs:
           if grep -rn 'Anthropic' skills/*/SKILL.md | grep -v 'RATIONALE\|references/'; then
             echo "::error::SKILL.md 出现外部口径引用但未指向外置文件——论证属人面，须搬 RATIONALE.md 或指向 references/"; fail=1
           fi
+          # S9 方法论三组成部分结构完整（规范见 references/three-kits-architecture.md）
+          for f in kits/README.md kits/L1-karpathy/SKILL.md kits/L2-superpowers/SKILL.md kits/L3-anthropic/SKILL.md references/three-kits-architecture.md; do
+            [ -f "$f" ] || { echo "::error file=$f::缺少方法论三组成部分必需文件 $f"; fail=1; }
+          done
+          for f in kits/L*/SKILL.md; do
+            d=$(basename "$(dirname "$f")")
+            grep -q "^name:[[:space:]]*$d[[:space:]]*$" "$f" || { echo "::error file=$f::frontmatter 缺少 name=$d"; fail=1; }
+            grep -q '^version:' "$f" || { echo "::error file=$f::frontmatter 缺少 version"; fail=1; }
+            lines=$(wc -l < "$f" | tr -d ' ')
+            if [ "$lines" -gt 150 ]; then
+              echo "::error file=$f::SKILL.md 超 150 行（当前 $lines）——人面内容应外置 RATIONALE.md / references/"; fail=1
+            fi
+          done
+          # S9-2 三组成部分人面与 AI 面版本同步
+          for f in kits/L*/RATIONALE.md; do
+            sd="$(dirname "$f")/SKILL.md"
+            sv=$(grep -m1 '^version:' "$sd" | sed 's/^version:[[:space:]]*//')
+            rv=$(grep -m1 '^reviewed-at-version:' "$f" | sed 's/^reviewed-at-version:[[:space:]]*//')
+            if [ "$sv" != "$rv" ] && ! grep -q '^stale:[[:space:]]*true' "$f"; then
+              echo "::error file=$f::reviewed-at-version=$rv 与 SKILL.md version=$sv 不一致——改 SKILL.md 须同步人面"; fail=1
+            fi
+          done
           exit $fail
 
       - name: 评测报告门禁
@@ -98,7 +120,7 @@ jobs:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           git fetch origin "$BASE_SHA" --depth=1 2>/dev/null || true
-          kit_changes=$(git diff --name-only "$BASE_SHA" HEAD -- AGENT.md skills/ rules/ references/ | wc -l | tr -d ' ')
+          kit_changes=$(git diff --name-only "$BASE_SHA" HEAD -- AGENT.md skills/ rules/ references/ kits/ | wc -l | tr -d ' ')
           report_changes=$(git diff --name-only "$BASE_SHA" HEAD -- evals/reports/ | grep -v 'TEMPLATE.md' | wc -l | tr -d ' ')
           echo "kit 内容变更文件数: $kit_changes；新增评测报告数: $report_changes"
           if [ "$kit_changes" -gt 0 ] && [ "$report_changes" -eq 0 ]; then

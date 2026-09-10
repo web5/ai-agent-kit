@@ -72,8 +72,18 @@
 
 判定：决策树引用 `.skills/xxx` 而 `skills/xxx/SKILL.md` 不存在 → 不通过（分派指向死链）。`ux-prototype-designer` 为决策树新增分支，须在 `skills/ux-prototype-designer/SKILL.md` 存在。
 
+### S9 · 方法论三组成部分结构完整
+
+规范见 `references/three-kits-architecture.md`，脚本项与 `eval-gate.yml` S9 同步维护。
+
+- **S9-1 必需文件**：`kits/README.md`、`kits/L1-karpathy/SKILL.md`、`kits/L2-superpowers/SKILL.md`、`kits/L3-anthropic/SKILL.md`、`references/three-kits-architecture.md` 缺任一即不通过。
+- **S9-2 frontmatter 与体积**：`kits/L*/SKILL.md` 必须含 `version`，且 `name` 与目录名一致；AI 常驻面 ≤150 行（人面外置 `RATIONALE.md`）。
+- **S9-3 双面版本同步**：`kits/L*/RATIONALE.md` 的 `reviewed-at-version` 必须等于同目录 `SKILL.md` 的 `version`（确不影响设计理由则标 `stale: true`）。
+
+判定：任一子项命中 → 不通过（防组成部分退化为空壳、人面与 AI 面漂移）。
+
 ## 判定与通过线
 
-- 五项（S1~S5）**全部通过**才视为 L1 达标；
+- 六项（S1~S5 + S9）**全部通过**才视为 L1 达标；
 - 任何一项失败即阻断合并（成熟度 L3「红线机器化」的最低要求）；
 - 脚本实现：`eval-gate.yml` 的「结构完备性检查」step；本清单是它的用例化来源，二者必须同步维护。

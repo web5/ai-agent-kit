@@ -1,5 +1,5 @@
 ---
-reviewed-at-version: 4.3.0
+reviewed-at-version: 4.4.0
 audience: human
 ---
 
@@ -9,15 +9,15 @@ audience: human
 > 改 `SKILL.md` 必须 bump `version` 并同步本文件 `reviewed-at-version`，否则 CI 失败（`eval-gate.yml` S8-2）。
 > 分层规范见 `references/dual-audience-design.md`。
 
-## §1 为什么方法论来源必须唯一
+## §1 为什么编排权必须唯一
 
 **双主链的实测失效形态**（宿主项目）：入口一度改走另一套工作流（Superpowers 系列 `brainstorming` / `writing-plans` / `executing-plans`），其计划模板**没有「交付物定义 + 验证判据」字段**，于是下游拿不到判据，验证链被整体架空——实测表现是「执行过程中设计时看不到交付验证」。
 
 **为什么不能两套并存**：两套工作流 = 两个真相源。同一个请求走哪一套，取决于宿主环境里恰好装了什么、甚至取决于加载顺序，行为因此不可预测、不可回归。判据编号（V1…Vn）的契约也会退化：A 链路产生的计划没有编号，B 链路的完成验证门无处对照。
 
-**为什么「环境里正好有」不是选用理由**：可用性 ≠ 适用性。判定标准是「这套工作流的产物是否含交付物定义 + 验证判据」，不是「它是否已安装」。不满足就一律不启用。
+**为什么「环境里正好有」不是选用理由**：可用性 ≠ 适用性。判定标准是「这套流程的产物是否含交付物定义 + 验证判据」，不是「它是否已安装」。
 
-清理宿主环境的第二套工作流见 `scripts/uninstall-superpowers.sh`（幂等，可回滚）。
+**为什么不优先整体卸载**：冲突面只有 4 个编排类技能（brainstorming / writing-plans / executing-plans / spec-driven-development），卸载面却是 20 个，代价是连 TDD 铁律、完成前验证、并行子 agent 一起丢掉。优先级：补齐判据字段使其与主链同构（首选）→ 同域同名以 `rd-*` 为准 → 整体卸载（最后手段，`scripts/uninstall-superpowers.sh`，幂等可回滚）。完整风险与解法见 `references/three-kits-architecture.md` §三 R1。
 
 ## §2 何时把角色升为独立 agent（「三信号」）
 
@@ -56,6 +56,7 @@ audience: human
 
 | 版本 | 变更 |
 |---|---|
+| 4.4.0 | 唯一性从「方法论唯一」收敛为「编排权唯一」：删除「不启用任何第二套工作流」表述，改为三级处理优先级（补齐判据字段 → 同域同名以 `rd-*` 为准 → 整体卸载）；明确工程纪律与行为准则属本套方法论组成部分、不得禁用 |
 | 4.3.0 | 团队模式架构图与 `task()` 调用示例外置到 `references/team-mode-playbook.md`（AI 面常驻层瘦身 ~38 行）；摘要纪律补为「结论 + 依据 + 未决项」三项 |
 | 4.2.0 | 补本文件（双面分层）：单一方法论来源理由、升独立 agent 的三信号、子 Agent 代价、评审链顺序理由、决策树与路由用例的绑定约定；分派与门禁语义未变 |
 | 4.1.1 | 方法论口径引用外置指向 `references/anthropic-workflow-mapping.md` |

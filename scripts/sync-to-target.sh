@@ -25,7 +25,7 @@ git checkout --quiet -B "$PR_BRANCH"
 
 rm -rf .codebuddy/agent-kit
 mkdir -p .codebuddy/agent-kit
-cp -R "$SRC_ROOT/skills" "$SRC_ROOT/rules" "$SRC_ROOT/references" "$SRC_ROOT/AGENT.md" .codebuddy/agent-kit/
+cp -R "$SRC_ROOT/skills" "$SRC_ROOT/rules" "$SRC_ROOT/references" "$SRC_ROOT/kits" "$SRC_ROOT/AGENT.md" .codebuddy/agent-kit/
 cp "$SRC_ROOT/README.md" .codebuddy/agent-kit/README.md
 
 if git diff --quiet && git diff --cached --quiet; then
