@@ -10,9 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Sync to target repo
+      - name: Sync to target repo(s)
         env:
           SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
-          TARGET_REPO: ${{ vars.TARGET_REPO || 'web5/web_system' }}
+          # 多目标：仓库变量 TARGET_REPOS 填 "owner/repo,owner/repo#分支"；
+          # 未设置时回退到旧的单目标 TARGET_REPO，再回退到默认值
+          TARGET_REPOS: ${{ vars.TARGET_REPOS || vars.TARGET_REPO || 'web5/web_system' }}
           TARGET_BASE: ${{ vars.TARGET_BASE || 'master' }}
         run: bash scripts/sync-to-target.sh
