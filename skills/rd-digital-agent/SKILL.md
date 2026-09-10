@@ -1,16 +1,22 @@
 ---
 name: rd-digital-agent
 description: 通用数字人 Hub — 根据任务类型与复杂度自动分派到子技能（brainstorm → plan → execute → review 流水线，外加调试/重构/探索/审查；执行收尾挂完成验证门）。唯一工作流入口，不并行 Superpowers 等第二套工作流。方案探索、内容创作、问题修复、重构等场景的入口。
-version: 4.1.0
+version: 4.3.0
+rationale: RATIONALE.md
+checks: .github/workflows/eval-gate.yml（S8 双面一致性）
+loads: references/（见文末「共享参考文档」表）
 ---
+
+> 设计理由 / 决策背景见 [`RATIONALE.md`](RATIONALE.md)（人面，按需加载，不在执行路径上）。
 
 # 通用数字人 Hub
 
 ## 唯一方法论来源（不并行第二套工作流）
 
-**方法来源唯一 = Anthropic AI native 工作方法论**（任务开工前先给交付物定义与验收判据 / spec 自带端到端验证步骤 / 完成要给证据）。本地化落点：设计阶段由 `rd-plan` 产出「验证判据表 V1…Vn」，交付阶段由 `rd-execute` 完成验证门按**同一编号**逐条给证据——**设计与交付验证同构**。
+**方法来源唯一 = Anthropic AI native 工作方法论**（任务开工前先给交付物定义与验收判据 / spec 自带端到端验证步骤 / 完成要给证据；口径落点与论证见 `references/anthropic-workflow-mapping.md`）。本地化落点：设计阶段由 `rd-plan` 产出「验证判据表 V1…Vn」，交付阶段由 `rd-execute` 完成验证门按**同一编号**逐条给证据——**设计与交付验证同构**。
 
-**不启用任何第二套工作流 skill**（如 Superpowers 系列的 `brainstorming` / `writing-plans` / `executing-plans` 等）：其计划模板不含「交付物定义 + 验证判据先行」，走它会绕过本 Kit 的验证链。宿主环境若同时装了同域或同名 skill，**一律以本 Kit 的 `rd-*` 为准**——不以"环境里正好有"为选用理由。
+**不启用任何第二套工作流 skill**（如 Superpowers 系列的 `brainstorming` / `writing-plans` / `executing-plans` 等）：其计划模板不含「交付物定义 + 验证判据先行」，走它会绕过本 Kit 的验证链。宿主环境若同时装了同域或同名 skill，**一律以本 Kit 的 `rd-*` 为准**。
+> 为什么方法论来源必须唯一（含双主链的实测失效形态）：见 `RATIONALE.md` §1。
 
 逐层落点审计见 `references/anthropic-workflow-mapping.md`。
 
@@ -102,7 +108,7 @@ version: 4.1.0
 
 > 通用规则（质疑呈现格式 / 禁止 / 回流仲裁）见 `references/challenge-playbook.md`；盲测规则见 `references/blind-test-playbook.md`。各角色 skill 的「跨角色质疑边」小节引用之。
 
-评审链不是单向流水线，角色间存在**逆向质疑**与**独立验证**反馈边，使多角色互相制衡（同一数字人本体的分身在扮演异质视角，质疑须落可观测判据、禁止主观扯皮）：
+评审链不是单向流水线，角色间存在**逆向质疑**与**独立验证**反馈边（质疑须落可观测判据，禁止主观扯皮）：
 
 | 质疑边 | 发起角色 | 目标角色 | 质疑内容 | 回流动作 |
 |--------|---------|---------|---------|---------|
@@ -115,7 +121,7 @@ version: 4.1.0
 要点：
 - 所有质疑须以**具体反例 + 必然失败清单 + 严重级 + 是否阻塞**呈现，禁止"感觉不对"式主观否定（呼应 thinking-checklist 辨证纪律）。
 - 最终仲裁权在人：质疑流到「人审节点」时由人裁决，确认权始终在人（见 AGENT.md 人审节点）。
-- 本数字人为单本体，跨角色质疑是 perspective-taking（同行评审模拟）；仅当某角色须有独立利益 / 独立汇报线（如测试具 veto 权）时，才按"三信号"升为独立 agent。
+- 本数字人为单本体，跨角色质疑是同行评审模拟（perspective-taking）；何时升为独立 agent 见 `RATIONALE.md` §2。
 
 ## 交付门禁（写码前强制校验）
 
@@ -142,61 +148,11 @@ version: 4.1.0
 
 ## 多 Agent 协作团队模式（Context 隔离）
 
-### 为什么需要子 Agent
+> 为什么需要子 Agent（单 Agent 顺序执行的上下文代价）：见 `RATIONALE.md` §3。
 
-| 方式 | 问题 |
-|------|------|
-| 单 Agent 顺序执行 | 所有历史留在一个上下文，token 越积越多，回答质量下降 |
-| 子 Agent 并行/接力 | 每个 Agent 独立上下文，完成任务后释放，主 Agent 只保留摘要 |
-
-### 架构
-
-```
-用户请求
-  │
-  ├─ 主 Agent（rd-digital-agent）← 只维护"当前阶段 + 结果摘要"
-  │     │                         上下文不会被子 Agent 的细节撑爆
-  │     │
-  │     ├── task(name="brainstorm-agent", team_name="<your-team>")  ← 独立上下文
-  │     │     返回: 方案摘要（2-3 句话）
-  │     │
-  │     ├── task(name="plan-agent", team_name="<your-team>")        ← 独立上下文
-  │     │     返回: TODO 列表摘要
-  │     │
-  │     ├── task(name="execute-agent", team_name="<your-team>")     ← 独立上下文
-  │     │     └─ 内部加载项目自有写作/产出纪律（可选）
-  │     │     返回: 变更摘要 + 自检结果
-  │     │
-  │     └── task(name="review-agent", team_name="<your-team>")      ← 独立上下文
-  │           返回: 审查报告摘要
-  │
-  └─ 主 Agent 汇总 → 输出给用户
-```
-
-### 启动方式
-
-在宿主平台创建团队后，将下方占位符 `<your-team>` 替换为实际团队名，用 `task(name="xxx", team_name="<your-team>")` 启动子 Agent。
-
-```javascript
-// 示例：完整流水线
-// 1. 主 Agent 收到需求后，spawn 子 Agent（每个独立上下文）
-task(name="brainstorm-agent", team_name="<your-team>", mode="plan",
-  prompt="需求: xxx。请输出 2-3 个方案并推荐")
-
-// 2. 用户选方案后，spawn plan-agent
-task(name="plan-agent", team_name="<your-team>", mode="plan",
-  prompt="选定方案: xxx。请拆分为可执行的 TODO 列表")
-
-// 3. 用户确认后，spawn execute-agent（加载项目自有纪律，可选）
-task(name="execute-agent", team_name="<your-team>", mode="acceptEdits",
-  prompt="实现: xxx。遵循迭代-校验工作流。")
-
-// 4. 执行完成后，spawn review-agent
-task(name="review-agent", team_name="<your-team>", mode="plan",
-  prompt="审查变更: xxx")
-```
-
-**关键**：子 Agent 完成后上下文即释放，主 Agent 只保存结果摘要。这比单 Agent 积累全部历史要轻量得多。
+- 每个子 Agent 独立上下文，完成后**立即释放**；主 Agent 只保存结果摘要——**摘要须含 结论 + 依据 + 未决项**，缺一即视为信息丢失。
+- 架构图、`task()` 调用示例、团队名占位符替换：见 `references/team-mode-playbook.md`（需要搭建团队模式时才加载）。
+- 宿主环境不提供 `Task` 工具时退化为串行执行，不视为违反工作流。
 
 需求转换（`requirement-translation`）作为链首 sub-agent 在 brainstorm 前 spawn、产出需求 spec；测试验证（`test-verification`）作为链尾 sub-agent 在 review 后 spawn、独立盲测产物。二者与流水线角色同为同本体分身、独立上下文，**不拆为独立 agent**。
 
@@ -226,3 +182,6 @@ task(name="review-agent", team_name="<your-team>", mode="plan",
 | `spec-workflow.md` | 需要 spec 文档模板 |
 | `iterate-verify-workflow.md` | 需要「草稿-校验-精修」迭代方法 |
 | `product-review-checklist.md` | 产品方案评审（需求/方案进技术评审前、设计确认节点） |
+| `team-mode-playbook.md` | 需要搭建多 Agent 团队模式时（架构图 / `task()` 调用示例 / 团队名占位符替换 / 摘要纪律） |
+| `challenge-playbook.md` | 跨角色质疑边（质疑呈现格式 / 禁止项 / 回流仲裁） |
+| `blind-test-playbook.md` | 测试验证角色做独立盲测时（盲测规则） |

@@ -30,7 +30,8 @@ ai-agent-kit/
 │       ├── 02-human-in-loop.md
 │       ├── 03-versioned-artifacts.md
 │       ├── 04-subagent-isolation.md
-│       └── 05-red-line-check.md
+│       ├── 05-red-line-check.md
+│       └── RATIONALE.md            #   五条红线的设计理由（人面，AI 不加载）
 ├── references/
 │   ├── ai-methodology.md                   # 完整方法论（8 节，可当 PPT 大纲）
 │   ├── eval-framework.md                   # 评测体系定稿（五层过滤 + 五维 rubric）
@@ -39,7 +40,8 @@ ai-agent-kit/
 │   ├── digital-agent-profile.md            # 数字人画像（第 1 号实例：七维 + 底层思维 + 技能集 + 行为约束）
 │   ├── anthropic-workflow-mapping.md       # Anthropic 工作方法论落点映射（每任务：交付物 + 验证判据先行）
 │   ├── fe-dev-common.md                    # 前端开发通用技能与规则（业界通用能力包）
-│   └── be-dev-common.md                    # 后端开发通用技能与规则（业界通用能力包）
+│   ├── be-dev-common.md                    # 后端开发通用技能与规则（业界通用能力包）
+│   └── dual-audience-design.md             # 双面读者分层设计（AI 面 / 人面：三层加载 + 归属判据 + 防漂移）
 ├── digital-agent-eval/         # 数字人技术产品型评测（定义维验收，独立于 evals/）
 ├── evals/                      # 回归评测体系（评估 kit 自身进化程度）
 │   ├── README.md               # 运行手册（怎么跑）
@@ -74,6 +76,7 @@ ai-agent-kit/
 | **验证优先**：完成声明 = 验证证据，禁止「应该没问题」 | Anthropic："Have Claude show evidence rather than asserting success" / "If you can't verify it, don't ship it" | `skills/rd-execute/SKILL.md` §完成验证门 |
 | **开工前置（不分级）**：任何任务动手前先定交付物定义与验证判据 | Anthropic：任务开工前讲清交付物与验收判据，给 agent 一个"能跑的检查" | `AGENT.md`「开工前置」+ `skills/rd-plan/references/thinking-checklist.md` 最小交付卡 |
 | **设计与交付验证同构**：判据落盘为编号的「验证判据表 V1…Vn」，设计时写在 spec 收尾，交付时按同一编号逐条给证据 | Anthropic："The most useful specs are self-contained: … finish with an end-to-end verification step" | `skills/rd-plan/SKILL.md` §验证判据表；`skills/rd-execute/SKILL.md` §完成验证门 |
+| **双面分层（AI 面 / 人面）**：定义资产分两层——AI 面是可执行指令（常驻、有体积上限），人面是设计理由 / 决策背景（外置 `RATIONALE.md`，按需加载）；只有判据类内容双面同源同编号 | 本地推导：两类读者失败模式不对称（人读不懂=不敢改，AI 读不懂=静默偏离；冗余对 AI 是 token 成本），统一内容必然双输 | `references/dual-audience-design.md`；`skills/*/RATIONALE.md`；`rules/general/RATIONALE.md` |
 
 ## 关键决策与理由（为什么这么定）
 
@@ -85,6 +88,8 @@ ai-agent-kit/
 | 交付准入项含判据表，缺失即禁止进入实现 | "边写边补判据"等于用结果倒推标准；只有判据先行，它才有资格当 stop condition |
 | 红线机器化（`eval-gate` S1–S7） | 文本约定会退化。改 kit 的 PR 由 CI 强制：判据表 / 完成验证门 / 唯一方法论声明三处条文任一被删除即失败，防止验证链被悄悄摘除 |
 | 人审固定三处，不随意增减 | 过多人不堪重负、过少则失控；顺序固定 逻辑 → 合规/红线 → 对照 spec，防止合规问题被逻辑讨论掩盖 |
+| 定义资产分 AI 面与人面，不追求统一写法 | 两类读者失败模式不对称：给 AI 加解释会占常驻上下文并稀释指令，给人只留条款则无人维护。唯一双面同源的内容是判据（V1…Vn），其余按加载层分离 |
+| 红线必须写出判定命令，写不出即未定义清楚 | 「靠自觉的红线不算红线」的文本约定会退化（人读一次、不会读第二次）；写不出判定命令，说明该条要么拆细、要么只是偏好而非红线 |
 
 ## 方法来源 · Anthropic 工作方法论引用
 
@@ -114,8 +119,8 @@ ai-agent-kit/
 ### 1. 作为智能体知识库加载
 将本仓库根目录整体作为智能体的知识源加载：
 - `AGENT.md` → 系统提示 / 项目入口
-- `skills/*` → 各技能（入口 = `rd-digital-agent`，其余由它分派）
-- `rules/general/*` → 红线规则
+- `skills/*/SKILL.md` → 各技能（入口 = `rd-digital-agent`，其余由它分派）；同目录 `RATIONALE.md` 是人面文档，**不加载**
+- `rules/general/NN-*.md` → 红线规则（约束 + 判定手段）；同目录 `RATIONALE.md` 是人面文档，**不加载**
 - `references/ai-methodology.md` → 完整参考（可当内部分享大纲）
 - `references/anthropic-workflow-mapping.md` → 每条方法论主张的逐层落点与缺口审计，改 kit 前先看这里
 
@@ -161,7 +166,8 @@ ai-agent-kit/
 
 `.github/workflows/eval-gate.yml` 在 PR 时做两层检查：
 
-- **结构检查 S1–S7**：必需文件齐全、无孤儿 skill、frontmatter `name` 与目录名一致、无占位符残留、路由目标存在、红线有执行手段；并强制 `rd-plan` 的**验证判据表**、`rd-execute` 的**完成验证门**、`AGENT.md` 的**唯一方法论来源声明**三处条文存在——任一被删除即 CI 失败（防止验证链被悄悄摘除）。
+- **结构检查 S1–S8**：必需文件齐全、无孤儿 skill、frontmatter `name` 与目录名一致、无占位符残留、路由目标存在、红线有执行手段；并强制 `rd-plan` 的**验证判据表**、`rd-execute` 的**完成验证门**、`AGENT.md` 的**唯一方法论来源声明**三处条文存在——任一被删除即 CI 失败（防止验证链被悄悄摘除）。
+  - **S8 双面一致性**（规范见 `references/dual-audience-design.md`）：S8-1 `SKILL.md` 行数上限（普通 ≤150 / Hub ≤260）+ `version` 字段；S8-2 `RATIONALE.md` 的 `reviewed-at-version` 必须等于 `SKILL.md` 的 `version`（防人面与 AI 面漂移，确不影响可标 `stale: true`）；S8-3 每条红线必须含「判定手段」节；S8-4 `SKILL.md` 出现外部口径引用须指向外置文件（论证属人面，不得占常驻上下文）。
 - **评测报告门禁**：改动 `AGENT.md` / `skills/` / `rules/` / `references/` 必须附评测报告（`evals/reports/`）；若改动不影响智能体行为（纯排版、错别字、纯新增文档），在 **PR 描述**加 `skip-eval` 标签并在 **commit message** 说明理由。
 
 ## 同步到其他仓库（可选）
@@ -182,7 +188,7 @@ ai-agent-kit/
 
 按融合后的 L1~L5 标尺自评：
 
-- ✅ L1 结构完整：三层结构、11 个 skills、5 条红线、CI 结构检查（`eval-gate.yml`）就绪
+- ✅ L1 结构完整：三层结构、13 个 skills、5 条红线（**每条均含判定手段**）、CI 结构检查（`eval-gate.yml` S1–S8）就绪；4 个核心 skill 已外置人面 `RATIONALE.md`
 - ✅ L2/L3/L4 用例集已落盘：路由用例 21 条（`evals/cases/routing.md`）、陷阱用例 6 条（`evals/cases/behavior.md`）、端到端任务卡 6 张 + 五维 RUBRIC（`evals/golden-tasks/`）
 - ✅ 运行手册就绪：日常评测（`evals/README.md`）+ 干净基线（`evals/run-baseline.md`，judge 隔离防自评污染）
 - ❌ 待办：① 跑首份基线评测报告（没有基线就没有进化曲线；须按 `evals/run-baseline.md` 在干净上下文执行）② L5 实战验证需积累真实人审打回率数据 ③ 红线示例需按项目实例化
@@ -195,6 +201,7 @@ ai-agent-kit/
 
 | 版本 | 日期 | 变更要点 |
 |---|---|---|
+| v1.4 | 2026-09-10 | **双面分层（AI 面 / 人面）**：定义资产分离 AI 常驻面与人面（`RATIONALE.md` 外置按需加载），红线五条补齐「判定手段」节，`eval-gate` 新增 S8 一致性检查；规范见 `references/dual-audience-design.md` |
 | v1.3 | 2026-09-10 | **设计与交付验证同构**：验证判据表 V1…Vn 成为 spec / 计划的收尾章节，交付时按同一编号勾核；删除独立 `verification-before-completion` 技能、职责收编进 `rd-execute`；新增唯一方法论来源声明；`eval-gate` 新增 S7 机器检查 |
 | v1.2 | 2026-09-04 | 六处逃逸口统一挂「分级不压缩交付物 + 验证判据」不变量；非代码任务的判据先行最小形态（验收核点节）固化 |
 | v1.1 | 2026-09-04 | 数字人画像口径同步；数字人产品评测换基线判定 |

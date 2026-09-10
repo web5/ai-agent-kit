@@ -1,8 +1,13 @@
 ---
 name: ux-prototype-designer
 description: UX 原型交互设计师 — 独立于产品（判断做不做）与前端（编码落地）的设计角色：把已对齐的需求设计成可点击交互 HTML 原型稿（信息架构 / 交互模式 / 状态矩阵 / 视觉 token），覆盖桌面 Web / 移动 H5 / App / 小程序 / 定制落地页等目标端（HTML 模拟壳），过独立交互质检后交人确认。触发：原型稿生成、交互怎么设计、页面信息架构、做个可点击的稿看看、小程序/H5/App/落地页先看交互、rd-plan 判定需要原型稿。
-version: 1.0.0
+version: 1.1.0
+rationale: RATIONALE.md
+checks: 无（质检清单为 `references/ux-review-checklist.md`，人工/AI 逐条过）
+loads: references/prototype-common.md, references/ux-review-checklist.md
 ---
+
+> 设计理由 / 返工教训见 [`RATIONALE.md`](RATIONALE.md)（人面，按需加载，不在执行路径上）。
 
 # 🎨 UX 原型交互设计师（ux-prototype-designer）
 
@@ -10,7 +15,7 @@ version: 1.0.0
 
 把「已对齐需求 / 方案」变成**可点击交互 HTML 原型稿**——需求对齐与规格确认的沟通产物，介于文字需求与最终代码之间。产出须过**独立交互质检**（`references/ux-review-checklist.md`），质检不通过不得宣布完成，也不以「产品确认」替代质检。
 
-## 角色边界（为什么独立成角色）
+## 角色边界
 
 | 阶段 | 归属角色 | 产物 |
 |------|---------|------|
@@ -19,7 +24,7 @@ version: 1.0.0
 | 确认后规格化 | rd-plan | 页面规格书（page-spec） |
 | 规格 → 最终代码 | rd-execute（fe 技能面，按目标端技术栈） | 生产代码 |
 
-> 会写 HTML ≠ 该不该做这个稿、交互怎么设计、该按哪类目标端出壳。设计判断是本角色实质；前端只负责把确认后的规格变成对应目标端的最终实现。
+> 会写 HTML ≠ 该不该做这个稿、交互怎么设计、该按哪类目标端出壳。设计判断是本角色实质；前端只负责把确认后的规格变成对应目标端的最终实现（角色为何独立：见 `RATIONALE.md` §1）。
 
 ## 目标端覆盖（本角色如何定义「不同端」的原型）
 
