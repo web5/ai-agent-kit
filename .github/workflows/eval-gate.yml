@@ -95,12 +95,18 @@ jobs:
         if: github.event_name == 'pull_request'
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           git fetch origin "$BASE_SHA" --depth=1 2>/dev/null || true
           kit_changes=$(git diff --name-only "$BASE_SHA" HEAD -- AGENT.md skills/ rules/ references/ | wc -l | tr -d ' ')
           report_changes=$(git diff --name-only "$BASE_SHA" HEAD -- evals/reports/ | grep -v 'TEMPLATE.md' | wc -l | tr -d ' ')
           echo "kit 内容变更文件数: $kit_changes；新增评测报告数: $report_changes"
           if [ "$kit_changes" -gt 0 ] && [ "$report_changes" -eq 0 ]; then
+            # skip-eval 豁免：PR 描述含该标签即放行（README §改动 kit 的门禁 有约定）
+            if printf '%s' "$PR_BODY" | grep -q 'skip-eval'; then
+              echo "::warning::PR 描述含 skip-eval 标签 → 豁免评测报告门禁。请确保 commit message 已说明为何不影响智能体行为，否则该标签属滥用。"
+              exit 0
+            fi
             echo "::error::本次 PR 修改了 AGENT.md/skills/rules/references，但未附评测报告。"
             echo "请按 evals/README.md 执行回归评测，并将报告落盘到 evals/reports/（复制 TEMPLATE.md 填写）。"
             echo "若本次修改不影响智能体行为（如纯排版、文档错别字），可在 PR 描述中加 skip-eval 标签并在 commit message 说明。"
