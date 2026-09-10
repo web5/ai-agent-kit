@@ -30,7 +30,8 @@ ai-agent-kit/
 │       ├── 02-human-in-loop.md
 │       ├── 03-versioned-artifacts.md
 │       ├── 04-subagent-isolation.md
-│       └── 05-red-line-check.md
+│       ├── 05-red-line-check.md
+│       └── RATIONALE.md            #   五条红线的设计理由（人面，AI 不加载）
 ├── references/
 │   ├── ai-methodology.md                   # 完整方法论（8 节，可当 PPT 大纲）
 │   ├── eval-framework.md                   # 评测体系定稿（五层过滤 + 五维 rubric）
@@ -39,7 +40,8 @@ ai-agent-kit/
 │   ├── digital-agent-profile.md            # 数字人画像（第 1 号实例：七维 + 底层思维 + 技能集 + 行为约束）
 │   ├── anthropic-workflow-mapping.md       # Anthropic 工作方法论落点映射（每任务：交付物 + 验证判据先行）
 │   ├── fe-dev-common.md                    # 前端开发通用技能与规则（业界通用能力包）
-│   └── be-dev-common.md                    # 后端开发通用技能与规则（业界通用能力包）
+│   ├── be-dev-common.md                    # 后端开发通用技能与规则（业界通用能力包）
+│   └── dual-audience-design.md             # 双面读者分层设计（AI 面 / 人面：三层加载 + 归属判据 + 防漂移）
 ├── digital-agent-eval/         # 数字人技术产品型评测（定义维验收，独立于 evals/）
 ├── evals/                      # 回归评测体系（评估 kit 自身进化程度）
 │   ├── README.md               # 运行手册（怎么跑）
@@ -70,6 +72,7 @@ ai-agent-kit/
 - **验证优先**：完成声明 = 验证证据，禁止「应该没问题」。
 - **开工前置（不分级）**：任何任务动手前先定交付物定义与验证判据，验收判据先行、完成后逐条对照证据（详见「方法来源」节）。
 - **设计与交付验证同构**：判据落盘为编号的「验证判据表 V1…Vn」（判据 / 验证手段 / PASS 条件 / 不通过怎么办），设计时写在 spec 收尾，交付时由 `rd-execute` 完成验证门按同一编号逐条给证据——全程只有这一份清单。
+- **双面分层（AI 面 / 人面）**：定义资产分两层——AI 面是可执行指令（常驻，有体积上限），人面是设计理由 / 决策背景（外置 `RATIONALE.md`，按需加载）；只有判据类内容双面同源同编号。规范见 `references/dual-audience-design.md`。
 
 ## 方法来源 · Anthropic 工作方法论引用
 
@@ -95,8 +98,8 @@ ai-agent-kit/
 ### 1. 作为智能体知识库加载
 将本仓库根目录整体作为智能体的知识源加载：
 - `AGENT.md` → 系统提示 / 项目入口
-- `skills/*` → 各技能
-- `rules/general/*` → 红线规则
+- `skills/*/SKILL.md` → 各技能（AI 面）；`skills/*/RATIONALE.md` 为人面，不进 AI 常驻上下文
+- `rules/general/NN-*.md` → 红线规则（约束 + 判定手段）；`rules/general/RATIONALE.md` 为人面
 - `references/ai-methodology.md` → 完整参考
 
 ### 2. 套用到具体项目
@@ -117,6 +120,14 @@ ai-agent-kit/
 | 评测体系定稿（五层过滤 + 五维 rubric） | [`references/eval-framework.md`](references/eval-framework.md) |
 
 被测 agent 就绪后的最快路径：打开 `evals/run-baseline.md`「脚本化执行」→ 填 `AGENT_CMD` → `bash scripts/run-eval.sh`。
+
+## 改动 kit 的门禁（贡献者必读）
+
+`.github/workflows/eval-gate.yml` 在 PR 时做两层检查：
+
+- **结构检查 S1–S8**：必需文件齐全、无孤儿 skill、frontmatter `name` 与目录名一致、无占位符残留、路由目标存在、红线有执行手段；并强制 `rd-plan` 的**验证判据表**、`rd-execute` 的**完成验证门**、`AGENT.md` 的**唯一方法论来源声明**三处条文存在——任一被删除即 CI 失败（防止验证链被悄悄摘除）。
+  - **S8 双面一致性**（规范见 `references/dual-audience-design.md`）：S8-1 `SKILL.md` 行数上限（普通 ≤150 / Hub ≤260）+ `version` 字段；S8-2 `RATIONALE.md` 的 `reviewed-at-version` 必须等于 `SKILL.md` 的 `version`（防人面与 AI 面漂移，确不影响可标 `stale: true`）；S8-3 每条红线必须含「判定手段」节；S8-4 `SKILL.md` 出现外部口径引用须指向外置文件。
+- **评测报告门禁**：改动 `AGENT.md` / `skills/` / `rules/` / `references/` 必须附评测报告（`evals/reports/`）；若改动不影响智能体行为（纯排版、错别字、纯新增文档），在 **PR 描述**加 `skip-eval` 标签并在 **commit message** 说明理由。
 
 ## 同步到其他仓库（可选）
 

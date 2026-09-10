@@ -59,6 +59,36 @@ jobs:
           if grep -q '兜底' AGENT.md && ! grep -q '兜底' skills/rd-review/SKILL.md; then
             echo "::error::AGENT.md 红线（兜底实现须先做第一性判断）缺少执行手段：skills/rd-review/SKILL.md 未含对应检查项"; fail=1
           fi
+          # S8 双面一致性（AI 面 / 人面分层，规范见 references/dual-audience-design.md）
+          # S8-1 AI 常驻面体积与版本字段
+          for f in skills/*/SKILL.md; do
+            d=$(basename "$(dirname "$f")")
+            lines=$(wc -l < "$f" | tr -d ' ')
+            limit=150
+            [ "$d" = "rd-digital-agent" ] && limit=260
+            if [ "$lines" -gt "$limit" ]; then
+              echo "::error file=$f::SKILL.md 超 $limit 行（当前 $lines）——人面内容应外置到 RATIONALE.md / references/，不得压缩措辞硬塞"; fail=1
+            fi
+            grep -q '^version:' "$f" || { echo "::error file=$f::frontmatter 缺少 version（版本同步规则要求）"; fail=1; }
+          done
+          # S8-2 人面与 AI 面版本同步（防双份漂移）
+          for f in skills/*/RATIONALE.md; do
+            [ -f "$f" ] || continue
+            sd="$(dirname "$f")/SKILL.md"
+            sv=$(grep -m1 '^version:' "$sd" | sed 's/^version:[[:space:]]*//')
+            rv=$(grep -m1 '^reviewed-at-version:' "$f" | sed 's/^reviewed-at-version:[[:space:]]*//')
+            if [ "$sv" != "$rv" ] && ! grep -q '^stale:[[:space:]]*true' "$f"; then
+              echo "::error file=$f::reviewed-at-version=$rv 与 SKILL.md version=$sv 不一致——改 SKILL.md 须同步人面；确不影响设计理由则在本文件标 stale: true"; fail=1
+            fi
+          done
+          # S8-3 红线必须有判定手段（靠自觉的不算红线）
+          for f in rules/general/[0-9]*.md; do
+            grep -q '判定手段' "$f" || { echo "::error file=$f::红线缺少「判定手段」节"; fail=1; }
+          done
+          # S8-4 AI 常驻面禁说服性论证：外部口径引用必须指向外置文件
+          if grep -rn 'Anthropic' skills/*/SKILL.md | grep -v 'RATIONALE\|references/'; then
+            echo "::error::SKILL.md 出现外部口径引用但未指向外置文件——论证属人面，须搬 RATIONALE.md 或指向 references/"; fail=1
+          fi
           exit $fail
 
       - name: 评测报告门禁

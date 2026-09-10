@@ -1,8 +1,13 @@
 ---
 name: rd-plan
 description: 方案设计 Agent — 将选定方案细化为可执行的任务列表，输出 requirements/design/tasks。触发：就按这个做、细化方案、拆任务。
-version: 1.1.0
+version: 1.2.0
+rationale: RATIONALE.md
+checks: .github/workflows/eval-gate.yml（S7 验证判据表 + S8 双面一致性）
+loads: references/thinking-checklist.md
 ---
+
+> 设计理由 / 决策背景 / 反例见 [`RATIONALE.md`](RATIONALE.md)（人面，按需加载，不在执行路径上）。
 
 # 📋 Plan Agent（方案设计）
 
@@ -41,9 +46,10 @@ version: 1.1.0
     - 若需要，按任务类型产出：
         - UI 类 → 页面规格书（page-spec，含布局 / 交互 / 视觉）
         - 非 UI / 架构类 → 架构图 / 接口契约 / 时序图
-    - 需「可点击交互 HTML」原型时（需求对齐、多方案演示），**转交给独立 UX 角色 `ux-prototype-designer` 产出**（角色职责与质检见其 SKILL / `references/ux-review-checklist.md`），并叠加项目层原型稿 scaffold（如 web_system `docs/ui/prototype-scaffold.html`）。本环节不直接产出 UI 类可点击原型（那是设计角色职责，不是编码角色的前置代劳）。
-    - 原型稿的目标端（桌面 Web / 移动 H5 / App / 小程序 / 定制落地页）由 UX 角色在工作流起始确认：已明确则回显，未明确则给建议并列待用户拍板。此处不重复定义形态细节（见 ux-prototype-designer `references/prototype-common.md` §三）。
+    - 需「可点击交互 HTML」原型时 → **转交独立 UX 角色 `ux-prototype-designer` 产出**（角色职责与质检见其 SKILL / `references/ux-review-checklist.md`），叠加项目层原型稿 scaffold（如有，见项目上下文）。本环节不直接产出 UI 类可点击原型。
+    - 原型稿目标端（桌面 Web / 移动 H5 / App / 小程序 / 定制落地页）由 UX 角色在工作流起始确认：已明确则回显，未明确则给建议并列待用户拍板；形态细节见其 `references/prototype-common.md` §三，此处不重复定义。
     - 判定结果与产出状态写入 TODO 列表（如 `原型稿: 需要(已确认) / 不需要`），供 rd-execute 入口校验。
+    > 为什么原型稿不由本环节代劳：见 `RATIONALE.md` §2。
   ↓
 【等待用户确认 TODO 列表 + 原型稿判定】
   ↓
@@ -85,7 +91,7 @@ While 未授权，when 访问受限文档，系统应提示申请权限
 
 ## 验证判据表（V1…Vn）— 设计与交付验证的同构载体
 
-> Anthropic 口径：*"The most useful specs are self-contained: … they finish with an end-to-end verification step"* / *"Give Claude a way to verify its work"*。验证因此不是独立文档，而是 spec / 计划的**收尾章节**：**设计时写的这张表，就是交付时逐条勾核的那张表**。
+> 本表是 spec / 计划的**收尾章节**，不是独立文档：**设计时写的这张表，就是交付时逐条勾核的那张表**。来源口径与论证见 `RATIONALE.md` §1。
 
 每条判据四列，缺任一列 = 判据未定义：
 

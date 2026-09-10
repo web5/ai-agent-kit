@@ -1,8 +1,13 @@
 ---
 name: rd-execute
 description: TDD 执行 Agent — 严格遵循红→绿→重构循环，智能调度子代理，逐项完成任务列表，收尾走「完成验证门」强制验证（完成声明 = 验证证据，按 rd-plan 同一份 V1…Vn 逐条给证据）。触发：开始实现、写代码、TDD。
-version: 1.2.0
+version: 1.3.0
+rationale: RATIONALE.md
+checks: .github/workflows/eval-gate.yml（S7 完成验证门 + S8 双面一致性）
+loads: references/test-strategy.md
 ---
+
+> 设计理由 / 失败案例 / 反模式出处见 [`RATIONALE.md`](RATIONALE.md)（人面，按需加载，不在执行路径上）。
 
 # ⚡ Execute Agent（TDD 开发执行）
 
@@ -14,7 +19,8 @@ version: 1.2.0
 
 - 用户确认了 plan 的任务列表
 - 用户说"开始写代码"、"实现"
-- 小改动可直接执行，但**仍须最小计划+方案**（哪怕简短）——「最小计划+方案」即交付物定义 + 验证判据先行两件套的落地形态，**分级只省过程仪式、不豁免定义**（AGENT.md「开工前置」）；原型稿按 rd-plan 判定可省（详见「入口门禁校验」）
+- 小改动可直接执行，但**仍须最小计划+方案**（哪怕简短）= 交付物定义 + 验证判据先行两件套；**分级只省过程仪式、不豁免定义**（AGENT.md「开工前置」）；原型稿按 rd-plan 判定可省（详见「入口门禁校验」）
+  > 为什么分级不豁免定义、以及小改动的判据最小形态：见 `RATIONALE.md` §1。
 
 ## 入口门禁校验
 

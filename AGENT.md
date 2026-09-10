@@ -60,8 +60,8 @@
 
 将本仓库作为智能体知识库根目录：
 - `AGENT.md` → 常驻系统提示
-- `skills/*` → 各技能
-- `rules/general/*` → 红线规则
+- `skills/*/SKILL.md` → 各技能（同目录 `RATIONALE.md` 是人面文档，不加载）
+- `rules/general/NN-*.md` → 红线规则（同目录 `RATIONALE.md` 是人面文档，不加载）
 - `references/ai-methodology.md` → 完整方法论
 
 加载到具体团队/项目时，将 `skills/rd-digital-agent/references/project-context.md` 替换为该团队/项目的信息。
