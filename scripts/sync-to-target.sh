@@ -23,7 +23,13 @@ SRC_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export GIT_TERMINAL_PROMPT=0
 
 if [ -z "${SYNC_TOKEN:-}" ]; then
-  echo "SYNC_TOKEN 未设置，跳过同步"
+  # 不得静默通过：普通 echo 只是日志里一行，workflow 依旧全绿——历史上曾连续 5 次
+  # 「空转但报绿」没人发现。CI 里改用 ::warning:: 让它进入运行摘要注解。
+  if [ -n "${CI:-}" ]; then
+    echo "::warning::SYNC_TOKEN 未设置，本次未同步任何内容。请在仓库 Settings → Secrets and variables → Actions 配置 SYNC_TOKEN"
+  else
+    echo "SYNC_TOKEN 未设置，跳过同步"
+  fi
   exit 0
 fi
 
