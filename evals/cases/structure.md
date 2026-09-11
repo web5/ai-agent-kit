@@ -1,6 +1,6 @@
 # L1 静态结构检查清单（structure）
 
-测什么：kit 结构完备性——文件齐全、无孤儿 skill、frontmatter 完整、占位残留、路由指向的 skill 存在、红线含判定手段（S6）、交付验证链条文存在（S7）、双面版本一致（S8）。全部为**机器可判定**的静态检查，不依赖模型，CI 每次 push 必跑（`eval-gate.yml`）。
+测什么：kit 结构完备性——文件齐全、无孤儿 skill、技能目录的资产类型受控（S2 附）、frontmatter 完整、占位残留、路由指向的 skill 存在、红线含判定手段（S6）、交付验证链条文存在（S7）、双面版本一致（S8）。全部为**机器可判定**的静态检查，不依赖模型，CI 每次 push 必跑（`eval-gate.yml`）。
 
 > 本清单是 L1 检查点的用例化：脚本（`scripts/check-structure.sh`）据此实现，人工据此核对。检查点新增须同步更新脚本与本清单。
 
@@ -33,7 +33,7 @@
 
 `skills/` 下每个 skill 必须被至少一处引用（分派决策树 / 路由用例 / README 目录结构），否则为孤儿。
 
-当前 13 个技能（Hub + 12 子技能）及引用来源：
+当前 14 个技能（Hub + 12 子技能 + 1 项资产维护型能力）及引用来源：
 
 | Skill | 引用来源 |
 |-------|---------|
@@ -50,8 +50,21 @@
 | `requirement-translation` | 决策树「模糊需求/我要个X」链首 + 路由用例 R22 |
 | `test-verification` | 评审链 §5 独立盲测 + 路由用例 R23 |
 | `user-memory` | 路由用例 R19/R20 + AGENT.md 记忆 |
+| `karpathy-llm-wiki` | README §资产模型「资产维护型能力」+ 任务卡 `evals/golden-tasks/T7-llm-wiki.md` |
 
 判定：`skills/<name>/SKILL.md` 存在但其 `<name>` 不在上表 → 孤儿，不通过。
+
+### S2 附 · 技能资产类型受控
+
+`skills/<name>/` 下的子目录**只允许**三种已登记的资产类型：
+
+| 子目录 | 用途 |
+|---|---|
+| `references/` | 模板 / 清单 / 长版说明（按需加载） |
+| `scripts/` | 可执行校验脚本（技能自带程序时用） |
+| `examples/` | 样例产物（示范目标格式） |
+
+判定：出现其他子目录名 → 不通过。**新增资产类型须先在本清单与 `check-structure.sh` 同时登记**，否则视为未受控载体。
 
 ### S3 · frontmatter 完整
 

@@ -27,6 +27,19 @@ if [ -z "${SYNC_TOKEN:-}" ]; then
   exit 0
 fi
 
+# 保护清单（路径相对 .codebuddy/agent-kit/）：永不覆盖、永不删除。
+# 见 docs/design/kit-contract-design.md §7.2 —— 下游定制不得被同步静默冲掉。
+# 注：rules/general/ 是 kit 自带的上游层；下游自建的 rules/<domain>/ 属项目层，受保护。
+is_protected() {
+  case "$1" in
+    skills/rd-digital-agent/references/project-context.md) return 0 ;;
+    rules/general/*) return 1 ;;
+    rules/*) return 0 ;;
+    *.local.md) return 0 ;;
+  esac
+  return 1
+}
+
 # 同步单个目标。整体跑在子 shell 里，退出即清理临时克隆。
 sync_one() {
   repo="$1"
@@ -55,12 +68,38 @@ sync_one() {
     git checkout --quiet -B "$PR_BRANCH" \
       || { echo "::error::创建同步分支失败：${repo}" >&2; exit 1; }
 
-    rm -rf .codebuddy/agent-kit || exit 1
+    # 逐文件同步（不整目录 rm -rf）+ 保护清单，见 docs/design/kit-contract-design.md §7.2：
+    # 旧实现 `rm -rf .codebuddy/agent-kit` 会静默冲掉下游在覆盖范围内的定制。
     mkdir -p .codebuddy/agent-kit || exit 1
-    cp -R "$SRC_ROOT/skills" "$SRC_ROOT/rules" "$SRC_ROOT/references" "$SRC_ROOT/AGENT.md" .codebuddy/agent-kit/ \
-      || { echo "::error::拷贝 kit 资产失败：${repo}" >&2; exit 1; }
-    cp "$SRC_ROOT/README.md" .codebuddy/agent-kit/README.md \
-      || { echo "::error::拷贝 README 失败：${repo}" >&2; exit 1; }
+    manifest="$(mktemp)" || exit 1
+    for sub in skills rules references AGENT.md README.md; do
+      [ -e "$SRC_ROOT/$sub" ] || continue
+      if [ -d "$SRC_ROOT/$sub" ]; then
+        find "$SRC_ROOT/$sub" -type f -print0 \
+          | while IFS= read -r -d '' f; do printf '%s\n' "${f#"$SRC_ROOT/"}"; done >> "$manifest"
+      else
+        printf '%s\n' "$sub" >> "$manifest"
+      fi
+    done
+    while IFS= read -r rel; do
+      [ -n "$rel" ] || continue
+      if is_protected "$rel"; then
+        echo "    [=] 跳过（受保护） $rel"
+        continue
+      fi
+      mkdir -p "$(dirname ".codebuddy/agent-kit/$rel")"
+      cp "$SRC_ROOT/$rel" ".codebuddy/agent-kit/$rel" \
+        || { echo "::error::写入失败：$rel" >&2; exit 1; }
+    done < "$manifest"
+    # 上游已删除的文件一并移除（保护清单除外），避免旧结构残留（如历史上被撤销的 kits/）
+    while IFS= read -r -d '' f; do
+      rel="${f#.codebuddy/agent-kit/}"
+      is_protected "$rel" && continue
+      if ! grep -qxF "$rel" "$manifest"; then
+        rm -f "$f" && echo "    [-] 移除（上游已删） $rel"
+      fi
+    done < <(find .codebuddy/agent-kit -type f -print0)
+    rm -f "$manifest"
 
     if git diff --quiet && git diff --cached --quiet; then
       echo "    无变更，跳过"

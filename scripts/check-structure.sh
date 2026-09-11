@@ -29,9 +29,23 @@ done
 for d in skills/*/; do
   s=$(basename "$d")
   case "$s" in
-    rd-digital-agent|rd-brainstorm|rd-plan|rd-execute|rd-review|ux-prototype-designer|systematic-debugging|incremental-refactoring|code-explore|tech-review|user-memory|requirement-translation|test-verification) ;;
+    rd-digital-agent|rd-brainstorm|rd-plan|rd-execute|rd-review|ux-prototype-designer|systematic-debugging|incremental-refactoring|code-explore|tech-review|user-memory|requirement-translation|test-verification|karpathy-llm-wiki) ;;
     *) echo "::error::孤儿 skill：$s 未被任何决策树/用例引用"; fail=1 ;;
   esac
+done
+
+# S2 附：技能目录内的子目录须是已定义的资产类型（reference 模板 / 可执行脚本 / 样例产物）
+# 目的：新增资产类型必须显式登记，防止技能目录里长出未受控的载体。
+for d in skills/*/; do
+  s=$(basename "$d")
+  for sub in "$d"*/; do
+    [ -d "$sub" ] || continue
+    atype=$(basename "$sub")
+    case "$atype" in
+      references|scripts|examples) ;;
+      *) echo "::error::技能出现未登记的资产类型：skills/$s/$atype（允许 references / scripts / examples）"; fail=1 ;;
+    esac
+  done
 done
 
 # S3 frontmatter 完整（name 与目录名一致）
@@ -64,13 +78,19 @@ grep -q '唯一方法论来源' AGENT.md || { echo "::error::AGENT.md 缺少「�
 
 # S8 双面一致性（AI 面 / 人面分层，规范见 references/dual-audience-design.md）
 # S8-1 AI 常驻面体积与版本字段
+# 体积上限按技能类型取（frontmatter `kind`）：hub / capability = 260（正文即流程或编排，不可压缩）；
+# discipline（缺省）= 150（纪律型，人面内容须外置）。类型显式声明，不再按目录名硬编码。
 for f in skills/*/SKILL.md; do
   d=$(basename "$(dirname "$f")")
   lines=$(wc -l < "$f" | tr -d ' ')
-  limit=150
-  [ "$d" = "rd-digital-agent" ] && limit=260
+  kind=$(sed -n '/^kind:/{s/^kind:[[:space:]]*//;p;q;}' "$f")
+  case "$kind" in
+    ""|discipline) limit=150 ;;
+    hub|capability) limit=260 ;;
+    *) echo "::error file=$f::frontmatter kind 取值非法（$kind）——只允许 hub / capability / discipline"; fail=1; limit=150 ;;
+  esac
   if [ "$lines" -gt "$limit" ]; then
-    echo "::error file=$f::SKILL.md 超 $limit 行（当前 $lines）——人面内容应外置到 RATIONALE.md / references/，不得压缩措辞硬塞"; fail=1
+    echo "::error file=$f::SKILL.md 超 $limit 行（当前 ${lines}，kind=${kind:-discipline}）——人面内容应外置到 RATIONALE.md / references/，不得压缩措辞硬塞"; fail=1
   fi
   grep -q '^version:' "$f" || { echo "::error file=$f::frontmatter 缺少 version（版本同步规则要求）"; fail=1; }
 done
