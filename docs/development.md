@@ -47,6 +47,17 @@ bash scripts/check-structure.sh   # 退出码 0 = 结构门禁可通过
 - 覆盖：必需文件齐全（S1）、无孤儿 skill（S2）、frontmatter（S3）、占位残留（S4）、路由目标存在（S5）、红线有执行手段（S6）、验证链条文（S7）、双面一致性（S8）。
 - 逐条含义见 `README.md` §改动 kit 的门禁 与 `references/dual-audience-design.md`。
 
+**定义完备性检查**（七维必答项的静态 lint，不跑模型、本地可跑）：
+
+```bash
+bash scripts/check-definition.sh              # 实例模式：检查 references/digital-agent-profile.md
+bash scripts/check-definition.sh --template   # 模板模式：只查槽位是否齐备
+```
+
+- 判定项 D1~D7：七维齐全 / 做成·不算做成 / 反例 ≥2 / 必然失败 ≥3 / 禁用形容词是否已翻译成可观测口径 / 决策树无「其他」黑洞 / 待确认项提示。
+- 依据与必答项清单见 `references/agent-definition-methodology.md` §二、§三。
+- 目前**未接入 CI**（作为本地 lint 与改动前自查使用）；如需门禁化，在 `eval-gate.yml` 的「结构完备性检查」后加一个 step 即可。
+
 ## 4. 提交路径与门禁
 
 到 `master` / `main` 的 PR 触发 `eval-gate` 两步：

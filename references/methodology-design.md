@@ -46,7 +46,7 @@ source: 本 kit 自演进（第 0 号实例 · 数字人）
 | 问题 | 事实 |
 |---|---|
 | 同一概念多处定义 | 「编排权唯一」出现在 9 个文件；「验证判据表」12+ 处；「开工前置」「三部分组成表」各 4–10 处 |
-| 符号碰撞 | `L1/L2/L3` 一套符号三种含义（方法论三部分 / 评测五层 / 成熟度标尺），`evals/cases/routing.md:47,48` 同一处并用两种 |
+| 符号碰撞 | `L1/L2/L3` 一套符号三种含义（方法论三部分 / 评测五层 / 成熟度标尺）。**已消歧**：方法论三部分随 `kits/` 撤销；成熟度改用 `M0–M5`，评测五层保留 `L1–L5` |
 | 平行注册体系 | kits 自带 `version` / `RATIONALE` 同步 / 150 行上限 → 逼出 `check-structure.sh` S9、`evals/cases/structure.md` S9 节、`eval-gate.yml` 的 `kits/` 路径规则、`sync-to-target.sh` 的 kits 拷贝、routing R24–R28 的期望分派 |
 | 违反自家规范 | `dual-audience-design.md` §三 规定「不能变成检查项/触发条件的 → 人面」，而 `kits/L3-anthropic/SKILL.md` 全文是「我是唯一入口」的元陈述 |
 | 漂移已实际发生 | 9 处计数/编号口径不一致、4 处已删技能 `verification-before-completion` 残留、`dual-audience-design.md` 文本损坏、`anthropic-workflow-mapping.md` 单行自相矛盾 |
