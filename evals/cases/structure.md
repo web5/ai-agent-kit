@@ -48,7 +48,7 @@
 | `code-explore` | 决策树「X 在哪实现/理解结构」 |
 | `tech-review` | 决策树「架构/选型/安全/信息结构」 |
 | `requirement-translation` | 决策树「模糊需求/我要个X」链首 + 路由用例 R22 |
-| `test-verification` | 评审链 §5 独立盲测 + 路由用例 R23 |
+| `test-verification` | 评审链 S7 独立盲测 + 路由用例 R23 |
 | `user-memory` | 路由用例 R19/R20 + AGENT.md 记忆 |
 | `karpathy-llm-wiki` | README §资产模型「资产维护型能力」+ 任务卡 `evals/golden-tasks/T7-llm-wiki.md` |
 
