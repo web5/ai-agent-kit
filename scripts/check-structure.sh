@@ -29,7 +29,7 @@ done
 for d in skills/*/; do
   s=$(basename "$d")
   case "$s" in
-    rd-digital-agent|rd-brainstorm|rd-plan|rd-execute|rd-review|ux-prototype-designer|systematic-debugging|incremental-refactoring|code-explore|tech-review|user-memory|requirement-translation|test-verification|karpathy-llm-wiki) ;;
+    rd-digital-agent|rd-brainstorm|rd-plan|rd-execute|rd-review|ux-prototype-designer|systematic-debugging|incremental-refactoring|code-explore|tech-review|user-memory|requirement-translation|test-verification|karpathy-llm-wiki|md-flashcards|resume-pdf-pipeline) ;;
     *) echo "::error::孤儿 skill：$s 未被任何决策树/用例引用"; fail=1 ;;
   esac
 done
@@ -109,7 +109,9 @@ for f in rules/general/[0-9]*.md; do
   grep -q '判定手段' "$f" || { echo "::error file=$f::红线缺少「判定手段」节"; fail=1; }
 done
 # S8-4 AI 常驻面禁说服性论证：外部口径引用必须指向外置文件
-if grep -rn 'Anthropic' skills/*/SKILL.md | grep -v 'RATIONALE\|references/'; then
+# 注：用 -e 多模式而非 '\|'（BRE alternation 是 GNU 扩展，macOS BSD grep 不支持，
+#     曾导致本地永久误报而 CI 正常 —— 2026-10-15 修复，两环境行为等价）
+if grep -rn 'Anthropic' skills/*/SKILL.md | grep -v -e 'RATIONALE' -e 'references/'; then
   echo "::error::SKILL.md 出现外部口径引用但未指向外置文件——论证属人面，须搬 RATIONALE.md 或指向 references/"; fail=1
 fi
 

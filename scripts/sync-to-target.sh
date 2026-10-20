@@ -78,7 +78,10 @@ sync_one() {
     # 旧实现 `rm -rf .codebuddy/agent-kit` 会静默冲掉下游在覆盖范围内的定制。
     mkdir -p .codebuddy/agent-kit || exit 1
     manifest="$(mktemp)" || exit 1
-    for sub in skills rules references AGENT.md README.md; do
+    # experts/        = 专家实例层（2026-10-15 新增，见 experts/README.md）
+    # scripts/redline/ = 门禁脚本实现（目录不存在时由下面 [ -e ] 自动跳过）
+    # 注：kit 自身维护脚本（check-structure.sh / run-eval.sh 等）不下发，下游不需要
+    for sub in skills rules references experts scripts/redline AGENT.md README.md; do
       [ -e "$SRC_ROOT/$sub" ] || continue
       if [ -d "$SRC_ROOT/$sub" ]; then
         find "$SRC_ROOT/$sub" -type f -print0 \
