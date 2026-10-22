@@ -116,6 +116,26 @@ presets: [
 
 > 五态命名固定：`normal / loading / empty / error / forbidden`。多一态（如 `partial`）自行扩展时要同步加选择器，机检只校验「用到的每个值都有规则」。
 
+**方案 B · 整屏状态层**（改造存量稿用，一次到位不逐屏重排）：
+
+```css
+.demo-states { display: none; }
+[data-demo-state]:not([data-demo-state="normal"]) > *:not(.demo-states) { display: none; }
+[data-demo-state]:not([data-demo-state="normal"]) .demo-states { display: block; }
+.demo-states > div { display: none; }
+[data-demo-state="empty"] .demo-states .only-empty { display: block; }
+/* loading / error / forbidden 同理 */
+```
+
+一个状态层 DOM，`applyState()` 时挂到当前屏（`screen.appendChild(layer)`），文案按屏名注入。
+
+| 方案 | 适用 | 代价 |
+|---|---|---|
+| A · 逐屏分支块 | 新稿；需要「列表空但统计卡仍在」这类**局部不同态** | 每屏都要排 4 个分支块 |
+| B · 整屏状态层 | 存量稿改造（8 屏真实内容已成型，重排 32 处不划算） | 只能表达**整屏**同态，做不了局部态 |
+
+两者共用同一套 `data-demo-state` 契约与机检，选哪个写进设计决策记录。
+
 ### 5.3 角色可见性
 
 ≤2 个角色可用纯 CSS（可被机检看到）：
